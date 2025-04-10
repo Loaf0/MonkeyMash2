@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://djuigseoqr6rk"]
+
+[ext_resource type="Script" uid="uid://c0kpgtcwfgi24" path="res://Player/camera_pivot.gd" id="1_81tar"]
+
+[node name="Camera" type="Node3D"]
+script = ExtResource("1_81tar")
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.512907, 0)
+doppler_tracking = 2
+
+[node name="CameraRay" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -4.47035e-08, 0, 4.47035e-08, 1, 0, 0.601459, 0)
+target_position = Vector3(0, 5, 3)
+
+[node name="InputCheck" type="Timer" parent="."]
+wait_time = 0.2
+
+[connection signal="timeout" from="InputCheck" to="." method="_on_input_check_timeout"]

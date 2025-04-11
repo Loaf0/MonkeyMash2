@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bvdthdcej65nq" path="res://Player/player.gd" id="1_4s81h"]
 [ext_resource type="PackedScene" uid="uid://ccf670c6bkob8" path="res://Player/character-male-e.glb" id="1_jt3wm"]
-[ext_resource type="Texture2D" uid="uid://cq3awe0wjqsih" path="res://addons/srcoder_thirdperson_controller/assets/Textures/colormap.png" id="3_btcbx"]
+[ext_resource type="Texture2D" uid="uid://cq3awe0wjqsih" path="res://assets/Textures/colormap.png" id="3_btcbx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_71pwh"]
 radius = 0.274773

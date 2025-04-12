@@ -11,15 +11,38 @@ config_version=5
 [application]
 
 config/name="Monkey Mash 2"
-run/main_scene="res://Levels/test.tscn"
+config/version="0.0.1"
+run/main_scene="res://scenes/levels/test/test.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
-config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0, 0.156863, 0.34902, 1)
+boot_splash/use_filter=false
+boot_splash/image="uid://du0flobkcuid6"
+config/icon="res://assets/2d/textures/icon.svg"
 
 [autoload]
 
-Settings="*res://GlobalScripts/Settings.gd"
-GameManager="*res://GlobalScripts/GameManager.gd"
-MouseLock="*res://Player/mouse_lock.gd"
+Settings="*res://scripts/global/Settings.gd"
+GameManager="*res://scripts/global/GameManager.gd"
+MouseLock="*res://scripts/player/mouse_lock.gd"
+
+[file_customization]
+
+folder_colors={
+"res://assets/": "red",
+"res://assets/2d/": "red",
+"res://assets/3d/": "red",
+"res://assets/audio/": "red",
+"res://assets/audio/music/": "red",
+"res://assets/audio/sfx/": "red",
+"res://scenes/": "yellow",
+"res://scenes/levels/": "yellow",
+"res://scenes/levels/test/": "yellow",
+"res://scenes/player/": "yellow",
+"res://scripts/": "blue",
+"res://scripts/global/": "blue",
+"res://scripts/menu/": "blue",
+"res://scripts/player/": "blue"
+}
 
 [input]
 

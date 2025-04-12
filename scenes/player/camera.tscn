@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://djuigseoqr6rk"]
 
-[ext_resource type="Script" uid="uid://c0kpgtcwfgi24" path="res://Player/camera_pivot.gd" id="1_81tar"]
+[ext_resource type="Script" uid="uid://c0kpgtcwfgi24" path="res://scripts/player/camera_pivot.gd" id="1_81tar"]
 
 [node name="Camera" type="Node3D"]
 script = ExtResource("1_81tar")

@@ -10,13 +10,11 @@ config_version=5
 
 [application]
 
-config/name="TheCrownAndTheCrypt"
-config/version="0.0.1"
+config/name="The Crown and The Crypt"
+config/version="0.0.2"
 run/main_scene="res://scenes/levels/test/test.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/bg_color=Color(0, 0.156863, 0.34902, 1)
-boot_splash/use_filter=false
-boot_splash/image="uid://du0flobkcuid6"
 config/icon="res://assets/2d/textures/icon.svg"
 
 [autoload]

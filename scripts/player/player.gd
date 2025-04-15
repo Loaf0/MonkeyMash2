@@ -30,7 +30,6 @@ enum State {
 @export var air_acceleration := 8.0 
 @export var standard_air_influence := 0.3
 var air_influence := standard_air_influence
-@export var dive_speed := 30.0
 @export var max_snap_angle := 45.0
 @export var turn_slowdown_threshold := 110.0
 @export var turn_slowdown_multiplier := 0.9
@@ -43,10 +42,12 @@ var ground_pound_timer := 0.0
 var ground_pound_started := false
 
 @export_category("Dive")
+@export var dive_speed := 20.0
 @export var dive_horizontal_speed := 10.0
 @export var dive_upward_boost := 8.0
 @export var dive_air_modifier := 0.1
 @export var max_dive_duration := 2.5
+@export var dive_turn_speed := 2.0
 var dive_timer := 0.0
 var dive_air_influence = standard_air_influence * dive_air_modifier
 
@@ -66,12 +67,18 @@ var recovery_timer := 0.0
 @export var wall_slide_max_speed := -6.0
 @export var wall_jump_force := Vector3(-10, 12, 0)
 @export var wall_slide_lerp_duration := 3.0
+@export var wall_jump_input_lock_duration := 0.15
+var wall_jump_lock_timer := 0.0
 var wall_slide_timer := 0.0
+
 
 @export_category("Buffers")
 @export var jump_buffer_time := 0.15
 @export var dive_buffer_time := 0.15
 @export var wall_jump_buffer_time := 0.15
+@export var wall_coyote_time := 0.05
+var wall_coyote_timer := 0.0
+var was_on_wall := false
 var wall_jump_buffer_timer := 0.0
 var dive_buffer_timer := 0.0
 var jump_buffer_timer := 0.0
@@ -106,8 +113,6 @@ func handle_input():
 
 	direction = (cam_forward * input_dir.y + cam_right * input_dir.x).normalized()
 
-	if Input.is_action_just_pressed("jump"):
-		jump_buffer_timer = jump_buffer_time
 	if Input.is_action_just_pressed("spin"):
 		dive_buffer_timer = dive_buffer_time
 	if Input.is_action_just_pressed("jump"):
@@ -115,6 +120,15 @@ func handle_input():
 		wall_jump_buffer_timer = wall_jump_buffer_time 
 
 func update_timers(delta):
+	# Wall jump coyote time
+	var on_wall_now = is_touching_wall() and is_moving_into_wall()
+	if !on_wall_now and was_on_wall:
+		wall_coyote_timer = wall_coyote_time
+	if wall_coyote_timer > 0.0:
+		wall_coyote_timer -= delta
+	was_on_wall = on_wall_now
+
+	# jump coyote time
 	if !is_on_floor():
 		coyote_timer -= delta
 	else:
@@ -135,7 +149,6 @@ func update_timers(delta):
 
 	if Input.is_action_just_released("jump"):
 		jump_held = false
-
 
 func jump():
 	velocity.y = jump_force
@@ -199,10 +212,8 @@ func update_state(delta):
 				ground_pound_timer = ground_pound_delay
 				current_speed = 0
 				velocity.y = 0 
-
 			else:
 				ground_pound_timer -= delta
-
 				if ground_pound_timer <= 0.0:
 					velocity.y = lerp(velocity.y, ground_pound_speed, ground_pound_acceleration * delta)
 				else:
@@ -239,7 +250,6 @@ func update_state(delta):
 
 		State.GROUND_POUND_RECOVERY:
 			recovery_timer -= delta
-
 			if jump_buffer_timer > 0.0:
 				velocity.y = jump_force * ground_pound_jump_multiplier
 				current_state = State.JUMP
@@ -254,16 +264,12 @@ func update_state(delta):
 			elif !is_on_wall() or !is_moving_into_wall():
 				current_state = State.FALL
 			elif wall_jump_buffer_timer > 0.0:
-				var wall_normal = get_wall_normal()
-				velocity = -wall_normal * wall_jump_force.x
-				velocity.y = wall_jump_force.y
+				perform_wall_jump()
 				current_state = State.WALL_JUMP
-				wall_jump_buffer_timer = 0.0
 			else:
 				wall_slide_timer += delta
 				var t = clamp(wall_slide_timer / wall_slide_lerp_duration, 0, 1)
 				var slide_speed = lerp(wall_slide_min_speed, wall_slide_max_speed, t)
-
 				if velocity.y < slide_speed:
 					velocity.y = slide_speed
 
@@ -299,7 +305,6 @@ func update_state(delta):
 					just_bonked = true
 					current_state = State.LAND
 
-
 func move_character(delta):
 	if current_state in [State.GROUND_POUND, State.GROUND_POUND_RECOVERY]:
 		velocity.x = 0
@@ -309,44 +314,43 @@ func move_character(delta):
 	
 	if current_state == State.BONK:
 		direction = Vector3(0, 0, 0)
-	
+		
 	if (current_state == State.DIVE):
 		air_influence = dive_air_influence
 	else:
 		air_influence = standard_air_influence
-	
+		
 	momentum_deceleration = ground_deceleration if is_on_floor() else air_deceleration
 	momentum_acceleration = ground_acceleration if is_on_floor() else air_acceleration
-	
+		
 	var input_magnitude = direction.length()
 	var move_direction = direction.normalized() if input_magnitude > 0.05 else Vector3.ZERO
-
+	
 	if input_magnitude > 0.05:
 		var target_angle = atan2(-move_direction.x, -move_direction.z)
 		var angle_diff = abs(rad_to_deg(wrapf(target_angle - rotation.y, -PI, PI)))
 		var turning_hard = angle_diff > turn_slowdown_threshold
 		var slowdown = turn_slowdown_multiplier if turning_hard else 1.0
 		current_speed = lerp(current_speed, move_speed * slowdown, momentum_acceleration * delta)
-		rotation.y = lerp_angle(rotation.y, target_angle, 10.0 * delta)
+		var turn_speed = dive_turn_speed if current_state == State.DIVE else 10.0
+		rotation.y = lerp_angle(rotation.y, target_angle, turn_speed * delta)
 	else:
 		current_speed = lerp(current_speed, 0.0, momentum_deceleration * delta)
-
+	
 	var desired_velocity = move_direction * current_speed
-
+	
 	if is_on_floor():
 		velocity.x = lerp(velocity.x, desired_velocity.x, acceleration * delta)
 		velocity.z = lerp(velocity.z, desired_velocity.z, acceleration * delta)
 	else:
-		var air_influence = 0.3
 		velocity.x = lerp(velocity.x, desired_velocity.x, air_acceleration * air_influence * delta)
 		velocity.z = lerp(velocity.z, desired_velocity.z, air_acceleration * air_influence * delta)
-
+	
 		if input_magnitude < 0.05:
 			velocity.x = lerp(velocity.x, 0.0, air_deceleration * delta)
 			velocity.z = lerp(velocity.z, 0.0, air_deceleration * delta)
-
+	
 	move_and_slide()
-
 
 func perform_spin(delta):
 	#float/jump/attack thing
@@ -354,9 +358,8 @@ func perform_spin(delta):
 
 func perform_dive(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")
-	var camera_yaw = camera.global_transform.basis.get_euler().y
-	var flat_forward = Vector3.FORWARD.rotated(Vector3.UP, camera_yaw)
-	var flat_right = Vector3.RIGHT.rotated(Vector3.UP, camera_yaw)
+	var flat_forward = Vector3.FORWARD.rotated(Vector3.UP, camera.global_transform.basis.get_euler().y)
+	var flat_right = Vector3.RIGHT.rotated(Vector3.UP, camera.global_transform.basis.get_euler().y)
 	var dive_direction = (flat_forward * input_dir.y + flat_right * input_dir.x).normalized()
 	
 	if dive_direction.length() < 0.1:
@@ -372,11 +375,9 @@ func perform_dive(delta):
 		var target_angle = atan2(-dive_direction.x, -dive_direction.z)
 		rotation.y = target_angle
 
-
 func update_debug_menu():
 	if position.y < -30:
 		position = Vector3(position.x, 100, position.z)
-		current_state == State.FALL
 	
 	$Control/Label.text = " Position : " + str(round_vector3(position)) + "\n Velocity : " + str(round_vector3(velocity)) + "\n State : " + str(State.keys()[current_state])
 
@@ -388,6 +389,8 @@ func get_speed():
 
 func is_moving_into_wall() -> bool:
 	var wall_normal = get_wall_normal()
+	if direction.length() < 0.05:
+		return false
 	return direction.dot(-wall_normal) > 0.5
 
 func bonk_detection() -> bool:
@@ -395,3 +398,11 @@ func bonk_detection() -> bool:
 
 func is_touching_wall() -> bool:
 	return get_slide_collision_count() > 0 and !is_on_floor()
+
+func perform_wall_jump():
+	var wall_normal = get_wall_normal()
+	velocity = -wall_normal * wall_jump_force.x
+	velocity.y = wall_jump_force.y
+	wall_jump_buffer_timer = 0.0
+	wall_jump_lock_timer = wall_jump_input_lock_duration
+	current_state = State.WALL_JUMP

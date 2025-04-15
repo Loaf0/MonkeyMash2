@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dgaexk2mqn6j8"]
+[gd_scene load_steps=8 format=3 uid="uid://dgaexk2mqn6j8"]
 
 [ext_resource type="Script" uid="uid://bvdthdcej65nq" path="res://scripts/player/player.gd" id="1_4s81h"]
 [ext_resource type="PackedScene" uid="uid://ccf670c6bkob8" path="res://assets/3d/Models/player/test_character_model.glb" id="1_jt3wm"]
@@ -14,9 +14,19 @@ albedo_texture = ExtResource("3_btcbx")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k53q1"]
 albedo_texture = ExtResource("3_btcbx")
 
+[sub_resource type="LabelSettings" id="LabelSettings_gmlin"]
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 10
+shadow_color = Color(0, 0, 0, 0.647059)
+
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
 script = ExtResource("1_4s81h")
+
+[node name="BonkCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.127154, 0)
+target_position = Vector3(0, 0, -0.4)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.358072, 0)
@@ -48,5 +58,6 @@ offset_bottom = 117.0
 text = "Velocity :
 Position :
 State : "
+label_settings = SubResource("LabelSettings_gmlin")
 
 [editable path="playermodel/character-male-e2"]

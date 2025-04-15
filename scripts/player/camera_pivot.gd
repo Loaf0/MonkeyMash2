@@ -3,7 +3,6 @@ extends Node3D
 @export var player: Node3D
 
 @onready var camera: Node3D = $Camera
-@onready var camera_ray = $CameraRay
 
 @export var camera_dist := 3.0
 @export var camera_height := 1.5  
@@ -70,7 +69,5 @@ func update_camera_position(delta: float) -> void:
 		global_position = target_pos
 
 	var target_offset = Vector3(0, 0, camera_dist)
-	if camera_ray.get_collider():
-		camera.position = camera_ray.get_collision_point() - camera_ray.global_position
-	else:
-		camera.position = camera.position.move_toward(target_offset, delta * move_smooth)
+
+	camera.position = camera.position.move_toward(target_offset, delta * move_smooth)

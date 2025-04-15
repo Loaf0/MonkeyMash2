@@ -52,6 +52,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5097, 7.5, 13.465)
 size = Vector3(3, 2, 3)
 material = SubResource("StandardMaterial3D_8uh7m")
 
+[node name="CSGBox3D10" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5097, 10.5, 13.465)
+size = Vector3(3, 2, 3)
+material = SubResource("StandardMaterial3D_8uh7m")
+
+[node name="CSGBox3D11" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5097, 10.5, 3.46501)
+size = Vector3(3, 2, 3)
+material = SubResource("StandardMaterial3D_8uh7m")
+
 [node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, -5)
 size = Vector3(2, 2, 10)

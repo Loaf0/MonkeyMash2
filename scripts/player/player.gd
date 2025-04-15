@@ -46,6 +46,8 @@ var ground_pound_started := false
 @export var dive_horizontal_speed := 10.0
 @export var dive_upward_boost := 8.0
 @export var dive_air_modifier := 0.1
+@export var max_dive_duration := 2.5
+var dive_timer := 0.0
 var dive_air_influence = standard_air_influence * dive_air_modifier
 
 @export var bonk_stun_time := 0.8
@@ -65,7 +67,6 @@ var recovery_timer := 0.0
 @export var wall_jump_force := Vector3(-10, 12, 0)
 @export var wall_slide_lerp_duration := 3.0
 var wall_slide_timer := 0.0
-
 
 @export_category("Buffers")
 @export var jump_buffer_time := 0.15
@@ -206,7 +207,6 @@ func update_state(delta):
 					velocity.y = lerp(velocity.y, ground_pound_speed, ground_pound_acceleration * delta)
 				else:
 					velocity.y = 0
-				# buffer this later
 				if dive_buffer_timer > 0.0:
 					current_state = State.DIVE
 					just_dived = true
@@ -220,9 +220,14 @@ func update_state(delta):
 		State.DIVE:
 			if just_dived:
 				bonk_timer = dive_bonk_window
+				dive_timer = 0.0
 				perform_dive(delta)
 			just_dived = false
 			
+			dive_timer += delta
+			if dive_timer >= max_dive_duration:
+				current_state = State.FALL
+		
 			if bonk_timer > 0.0:
 				bonk_timer -= delta
 				if bonk_detection():

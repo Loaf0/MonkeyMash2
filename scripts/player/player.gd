@@ -84,7 +84,7 @@ var dive_buffer_timer := 0.0
 var jump_buffer_timer := 0.0
 var coyote_timer := 0.0
 
-@onready var camera = $"../Camera"
+@onready var camera
 
 var direction: Vector3
 var current_speed := 0.0
@@ -94,16 +94,32 @@ var just_dived = false
 
 var current_state: State = State.FALL
 
-func _ready():
-	pass
+func _spawn_camera():
+	var camera_instance = preload("res://scenes/player/camera.tscn").instantiate()
+	get_parent().add_child(camera_instance)
+	camera = camera_instance
+	camera.set_player(self)
+	camera.camera.make_current()
+
+	set_process_input(true)
+	set_physics_process(true)
+
+func _enter_tree():
+	set_multiplayer_authority(name.to_int())
+
+func _ready() -> void:
+	if is_multiplayer_authority():
+		_spawn_camera()
 
 func _physics_process(delta):
-	update_debug_menu()
-	handle_input()
-	update_timers(delta)
-	update_state(delta)
-	apply_gravity(delta)
-	move_character(delta)
+	if is_multiplayer_authority():
+		update_debug_menu()
+		handle_input()
+		update_timers(delta)
+		update_state(delta)
+		apply_gravity(delta)
+		move_character(delta)
+
 
 func handle_input():
 	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")

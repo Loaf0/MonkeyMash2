@@ -20,7 +20,6 @@ var yaw := 0.0
 var pitch := 0.0
 
 func _ready():
-	player = get_node("../Player")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	yaw = rotation_degrees.y
 	pitch = rotation_degrees.x
@@ -71,3 +70,6 @@ func update_camera_position(delta: float) -> void:
 	var target_offset = Vector3(0, 0, camera_dist)
 
 	camera.position = camera.position.move_toward(target_offset, delta * move_smooth)
+
+func set_player(p):
+	player = p

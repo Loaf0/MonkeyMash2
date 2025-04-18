@@ -9,7 +9,7 @@ enum State {
 @export var gravity := -12.0
 
 @export_category("Jumping")
-@export var jump_force := 7.5
+@export var jump_force := 7.0
 @export var jump_extra_force := 3.0
 @export var jump_hold_time := 0.2
 @export var apex_gravity = 0.8
@@ -22,7 +22,7 @@ enum State {
 @export var move_speed := 7.0
 @export var acceleration := 15.0
 @export var momentum_acceleration := 3.0
-@export var momentum_deceleration := 30.0
+@export var momentum_deceleration := 20.0
 @export var ground_deceleration := 30.0 
 @export var ground_acceleration := 10.0
 @export var air_deceleration := 0.0
@@ -42,8 +42,8 @@ var ground_pound_started := false
 
 @export_category("Dive")
 @export var dive_speed := 8.0
-@export var dive_horizontal_speed := 4.0
-@export var dive_upward_boost := 8.0
+@export var dive_horizontal_speed := 5.0
+@export var dive_upward_boost := 6.0
 @export var dive_air_modifier := 0.1
 @export var max_dive_duration := 2.5
 @export var dive_turn_speed := 2.0
@@ -270,6 +270,8 @@ func update_state(delta):
 				var slide_speed = lerp(wall_slide_min_speed, wall_slide_max_speed, t)
 				if velocity.y < slide_speed:
 					velocity.y = slide_speed
+				velocity = Vector3(velocity.x * .9, velocity.y, velocity.z * .9)
+
 
 		State.WALL_JUMP:
 			if Input.is_action_just_pressed("ground_pound"):
@@ -290,10 +292,16 @@ func update_state(delta):
 			if just_bonked:
 				stunned_timer = bonk_stun_time
 				bonk_timer = 0.0
+
 				var wall_normal = get_wall_normal()
-				if wall_normal != Vector3.ZERO:
-					velocity = wall_normal * 6.0
-					velocity.y = 3.5
+				if wall_normal == Vector3.ZERO:
+					var horizontal_vel = Vector3(velocity.x, 0, velocity.z)
+					if horizontal_vel.length() > 0:
+						wall_normal = -horizontal_vel.normalized()
+					else:
+						wall_normal = -transform.basis.z
+				velocity = wall_normal * 3.0
+				velocity.y = 1.5
 			just_bonked = false
 			if is_on_floor():
 				stunned_timer -= delta

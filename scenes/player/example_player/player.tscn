@@ -5023,7 +5023,7 @@ text = "player name test"
 replication_config = SubResource("SceneReplicationConfig_wb3a5")
 
 [node name="BonkCast" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58764, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.306701, 0)
 target_position = Vector3(0, 0, -0.6)
 
 [node name="Control" type="Control" parent="."]

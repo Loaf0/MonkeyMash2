@@ -1,8 +1,8 @@
 extends Node3D
 
-@onready var skin_input: LineEdit = $Menu/MainContainer/MainMenu/Option2/SkinInput
-@onready var nick_input: LineEdit = $Menu/MainContainer/MainMenu/Option1/NickInput
-@onready var address_input: LineEdit = $Menu/MainContainer/MainMenu/Option3/AddressInput
+@onready var skin_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option2/SkinInput
+@onready var nick_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option1/NickInput
+@onready var address_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option3/AddressInput
 @onready var players_container: Node3D = $PlayersContainer
 @onready var menu: Control = $Menu
 @export var player_scene: PackedScene

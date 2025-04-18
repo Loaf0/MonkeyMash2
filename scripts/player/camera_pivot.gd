@@ -4,23 +4,22 @@ extends Node3D
 
 @onready var camera: Node3D = $Camera
 
-@export var camera_dist := 3.0
-@export var camera_height := 1.5  
-@export var max_camera_dist := 5.0
-@export var min_camera_dist := 3.0
+@export var camera_dist := 15.0
+@export var camera_height := 0.5
+@export var max_camera_dist := 8.0
+@export var min_camera_dist := 5.0
 @export var speed_zoom_mod = 20.0  
 @export var rotation_speed := 3.5 
 @export var move_smooth := 6.0
 @export var vertical_limit := 50.0
 @export var right_stick_influence := 45.0
-@export var follow_behind_strength := 1000.0
+@export var follow_behind_strength := 30.0
 
 var using_mkb = false
 var yaw := 0.0
 var pitch := 0.0
 
 func _ready():
-	player = get_node("../Player")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	yaw = rotation_degrees.y
 	pitch = rotation_degrees.x
@@ -46,7 +45,7 @@ func handle_controller_input(delta: float) -> void:
 		pitch = clamp(pitch, -vertical_limit, vertical_limit)
 	else:
 		var move_x := Input.get_action_strength("left_stick_right") - Input.get_action_strength("left_stick_left")
-		if abs(move_x) > 0.1 and player.has_method("get_speed") and player.get_speed().length() > 0.05:
+		if abs(move_x) > 0.1:
 			yaw -= move_x * right_stick_influence * delta
 
 	rotation_degrees = Vector3(pitch, yaw, 0)
@@ -71,3 +70,6 @@ func update_camera_position(delta: float) -> void:
 	var target_offset = Vector3(0, 0, camera_dist)
 
 	camera.position = camera.position.move_toward(target_offset, delta * move_smooth)
+
+func set_player(p):
+	player = p

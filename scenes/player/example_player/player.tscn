@@ -6,12 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://cw6pxwst2gh85" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotYellowPalette.png" id="3_l3dv8"]
 [ext_resource type="Texture2D" uid="uid://bbid6mowxhd5b" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotGreenPalette.png" id="4_74ree"]
 [ext_resource type="Texture2D" uid="uid://fpmmv2oxjcdv" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotPalette.png" id="4_max2b"]
-[ext_resource type="Script" uid="uid://od2fcwsypo27" path="res://scenes/player/example_player/spring_arm_offset.gd" id="4_ygggd"]
 [ext_resource type="Texture2D" uid="uid://brp1gy30s4rks" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotRedPalette.png" id="5_qlefn"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mx45w"]
-radius = 0.35796
-height = 1.73092
+radius = 0.309272
+height = 1.57107
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dk1he"]
 resource_name = "Material"
@@ -4780,23 +4779,28 @@ properties/3/path = NodePath("PlayerNick/Nickname:text")
 properties/3/spawn = true
 properties/3/replication_mode = 1
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body", "_spring_arm_offset")]
+[sub_resource type="LabelSettings" id="LabelSettings_n2ifj"]
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 10
+shadow_color = Color(0, 0, 0, 0.647059)
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 collision_mask = 3
 script = ExtResource("1_tdh26")
 _body = NodePath("3DGodotRobot")
-_spring_arm_offset = NodePath("SpringArmOffset")
 blue_texture = ExtResource("4_max2b")
 yellow_texture = ExtResource("3_l3dv8")
 green_texture = ExtResource("4_74ree")
 red_texture = ExtResource("5_qlefn")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.066, 0.828, 0.01)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.784147, 0)
 shape = SubResource("CapsuleShape3D_mx45w")
 
 [node name="3DGodotRobot" type="Node3D" parent="." node_paths=PackedStringArray("_character", "animation_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0644093, -1.19209e-07, -0.035357)
+transform = Transform3D(-1, 0, 1.50996e-07, 0, 1, 0, -1.50996e-07, 0, -1, 0, 0, 0)
 script = ExtResource("2_mexc5")
 _character = NodePath("..")
 animation_player = NodePath("AnimationPlayer")
@@ -5007,25 +5011,34 @@ libraries = {
 }
 autoplay = "Idle"
 
-[node name="SpringArmOffset" type="Node3D" parent="." node_paths=PackedStringArray("_spring_arm")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
-script = ExtResource("4_ygggd")
-_spring_arm = NodePath("SpringArm3D")
-
-[node name="SpringArm3D" type="SpringArm3D" parent="SpringArmOffset"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-spring_length = 5.0
-
-[node name="Camera3D" type="Camera3D" parent="SpringArmOffset/SpringArm3D"]
-current = true
-
 [node name="PlayerNick" type="Node3D" parent="."]
 
 [node name="Nickname" type="Label3D" parent="PlayerNick"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.97037, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.83685, 0)
 billboard = 1
 outline_modulate = Color(0, 0, 0, 0.301961)
 text = "player name test"
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_wb3a5")
+
+[node name="BonkCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58764, 0)
+target_position = Vector3(0, 0, -0.6)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_right = 289.0
+offset_bottom = 117.0
+text = "Velocity :
+Position :
+State : "
+label_settings = SubResource("LabelSettings_n2ifj")

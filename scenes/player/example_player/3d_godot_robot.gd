@@ -22,7 +22,7 @@ func animate(_velocity: Vector3) -> void:
 		return
 
 	if _velocity: 
-		if _character.is_running() and _character.is_on_floor():
+		if _velocity.length() > 3.0 and _character.is_on_floor():
 			animation_player.play("Sprint")
 			return
 		

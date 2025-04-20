@@ -3,6 +3,8 @@ extends Node3D
 @onready var skin_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option2/SkinInput
 @onready var nick_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option1/NickInput
 @onready var address_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option3/AddressInput
+@onready var port_input : LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option4/PortInput
+
 @onready var players_container: Node3D = $PlayersContainer
 @onready var menu: Control = $Menu
 @export var player_scene: PackedScene
@@ -33,12 +35,13 @@ func _on_player_connected(peer_id, player_info):
 	_add_player(peer_id, player_info)
 	
 func _on_host_pressed():
+	var port = int(port_input.text)
 	menu.hide()
-	Network.start_host()
+	Network.start_host(port)
 
 func _on_join_pressed():
 	menu.hide()
-	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges().to_lower(), address_input.text.strip_edges())
+	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges().to_lower(), address_input.text.strip_edges(), int(port_input.text))
 	
 func _add_player(id: int, player_info : Dictionary):
 	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:

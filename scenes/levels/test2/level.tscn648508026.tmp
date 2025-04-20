@@ -48,58 +48,8 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -32, -7.44231, 0)
 use_collision = true
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 3.5, 0)
-size = Vector3(17, 8, 20)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D12" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 10, 0)
-size = Vector3(1, 5, 20)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D13" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6667, 7.00611, 9.83333)
-size = Vector3(4, 0.988403, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D14" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6667, 7.00611, -0.166666)
-size = Vector3(2, 0.988403, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D15" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6667, 7.00611, -9.33333)
-size = Vector3(4, 0.988403, 4)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D16" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 14.6667, 8.33944, -15.0313)
-size = Vector3(12, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D18" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 10, 11.6728, -40.3647)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D19" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.874865, -0.484367, 0, 0.484367, 0.874865, 14, 13.0061, -39.698)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D20" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.719692, -0.694294, 0, 0.694294, 0.719692, 18, 13.8656, -38.3647)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D21" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.515472, -0.856907, 0, 0.856907, 0.515472, 22, 13.8656, -36.3647)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D17" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 1.98682e-08, 0, -1.98682e-08, 1, 16.1667, 10.0039, -27.6774)
-size = Vector3(17, 0.988403, 13)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9903, 3.5, -0.0349922)
+size = Vector3(2, 8, 20)
 material = SubResource("StandardMaterial3D_tc26a")
 
 [node name="CSGBox3D6" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
@@ -424,7 +374,6 @@ _spawnable_scenes = PackedStringArray("uid://cffjduipbb3s5")
 spawn_path = NodePath("../PlayersContainer")
 
 [node name="WorldCamera" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18, 0)
 script = ExtResource("6_enyjo")
 
 [node name="Camera3D" type="Camera3D" parent="WorldCamera"]

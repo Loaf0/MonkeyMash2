@@ -1,10 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://dugaivbj1o66n"]
+[gd_scene load_steps=12 format=3 uid="uid://dugaivbj1o66n"]
 
 [ext_resource type="Script" uid="uid://cpjgbyy1vfsu0" path="res://scenes/levels/test2/level.gd" id="1_e1sh7"]
 [ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://scenes/player/example_player/player.tscn" id="1_uvcbi"]
 [ext_resource type="Texture2D" uid="uid://bkubbogydq1lw" path="res://scenes/levels/test/Skybox.png" id="3_by4y0"]
-[ext_resource type="Texture2D" uid="uid://chawqtd3fcydp" path="res://assets/2d/textures/test/texture_01.png" id="3_gg06f"]
 [ext_resource type="FontFile" uid="uid://djre78oagy06t" path="res://assets/2d/fonts/Kurland.ttf" id="3_icc4p"]
+[ext_resource type="PackedScene" uid="uid://bcm2jbg48g5aj" path="res://scenes/levels/test2/map.tscn" id="4_enyjo"]
 [ext_resource type="PackedScene" uid="uid://djuigseoqr6rk" path="res://scenes/player/camera.tscn" id="6_74mb0"]
 [ext_resource type="Script" uid="uid://cf4kffcsdg1sy" path="res://scenes/levels/test2/world_camera.gd" id="6_enyjo"]
 
@@ -18,19 +18,6 @@ sky_material = SubResource("PanoramaSkyMaterial_gg06f")
 background_mode = 2
 sky = SubResource("Sky_mkyii")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tc26a"]
-albedo_color = Color(0.26169, 0.66, 0.1914, 1)
-albedo_texture = ExtResource("3_gg06f")
-uv1_scale = Vector3(0.25, 0.25, 0.25)
-uv1_triplanar = true
-grow_amount = 0.337
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_enyjo"]
-albedo_texture = ExtResource("3_gg06f")
-uv1_scale = Vector3(0.25, 0.25, 0.25)
-uv1_triplanar = true
-grow_amount = 0.337
-
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_npnbc"]
 color = Color(0, 0, 0, 0)
 
@@ -39,7 +26,6 @@ script = ExtResource("1_e1sh7")
 player_scene = ExtResource("1_uvcbi")
 
 [node name="Environment" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 7, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
 environment = SubResource("Environment_74mb0")
@@ -49,206 +35,59 @@ transform = Transform3D(0.702724, 0.616144, 0.355731, -0.0993731, -0.410096, 0.9
 shadow_enabled = true
 shadow_blur = 0.5
 
-[node name="CSGCombiner3D" type="CSGCombiner3D" parent="Environment"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -32, -7.44231, 0)
-use_collision = true
+[node name="CSGCombiner3D" parent="Environment" instance=ExtResource("4_enyjo")]
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 3.5, 0)
-size = Vector3(17, 8, 20)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D31" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4, 0)
-operation = 2
-size = Vector3(15, 6, 16)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D32" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2.66667, 9)
-operation = 2
-size = Vector3(2, 3, 5)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D12" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 10, 0)
-size = Vector3(1, 5, 20)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D13" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6667, 7.00611, 9.83333)
-size = Vector3(4, 0.988403, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D14" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6667, 7.00611, -0.166666)
-size = Vector3(2, 0.988403, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D15" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6667, 7.00611, -9.33333)
-size = Vector3(4, 0.988403, 4)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D16" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 14.6667, 8.33944, -15.0313)
-size = Vector3(12, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D18" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 10, 11.6728, -40.3647)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D19" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.874865, -0.484367, 0, 0.484367, 0.874865, 14, 13.0061, -39.698)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D20" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.719692, -0.694294, 0, 0.694294, 0.719692, 18, 13.8656, -38.3647)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D21" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 0.515472, -0.856907, 0, 0.856907, 0.515472, 22, 13.8656, -36.3647)
-size = Vector3(4, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D17" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 1.98682e-08, 0, -1.98682e-08, 1, 16.1667, 10.0039, -27.6774)
-size = Vector3(17, 0.988403, 13)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D6" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4903, 0.5, 13.465)
-size = Vector3(3, 2, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D7" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5097, 1.5, 13.465)
-size = Vector3(7, 2, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D8" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5097, 7.5, 13.465)
-size = Vector3(3, 10, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D9" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5097, 7.5, 13.465)
-size = Vector3(3, 2, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D10" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5097, 10.5, 13.465)
-size = Vector3(3, 2, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D11" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5097, 10.5, 3.46501)
-size = Vector3(3, 2, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D22" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -24.1764, 13.8333, 1.79834)
-size = Vector3(1, 6, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D23" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, -0.00198967, 0.999998, 0, 0.999998, 0.00198967, -1, 8.69714e-11, -4.37113e-08, -24.1739, 13.8333, 5.13168)
-size = Vector3(1, 6, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D24" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -24.1764, 16.3333, 7.13168)
-size = Vector3(5, 1, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D26" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -28.343, 16.3333, 3.4678)
-size = Vector3(12.3278, 1, 6)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D27" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.52342, 1, 4.80392)
-size = Vector3(5, 1, 1.73291)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D29" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.52342, 1.26666, 7.13433)
-size = Vector3(0.339178, 1.53333, 1.73291)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D37" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.52342, 1.26666, 2.46766)
-size = Vector3(0.339178, 1.53333, 1.73291)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D30" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.157, 1.26666, -3.53234)
-size = Vector3(0.339178, 1.53333, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D33" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.157, 1, -5.86275)
-size = Vector3(5, 1, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D34" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.157, 1.5, -8.03536)
-size = Vector3(0.654785, 2, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D35" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.453, 1.0791, -7.05328)
-size = Vector3(0.91333, 1.1582, 1.35791)
-material = SubResource("StandardMaterial3D_enyjo")
-
-[node name="CSGBox3D36" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.8771, 1.0791, -7.05328)
-size = Vector3(0.91333, 1.1582, 1.35791)
-material = SubResource("StandardMaterial3D_enyjo")
-
-[node name="CSGBox3D28" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8.93455, 1.5, 4.80392)
-size = Vector3(5, 2, 0.555176)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D25" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, -0.00198967, 0.999998, 0, 0.999998, 0.00198967, -1, 8.69714e-11, -4.37113e-08, -24.1789, 16.3333, -0.201656)
-size = Vector3(5, 1, 3)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D3" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, -5)
-size = Vector3(2, 2, 10)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D4" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, -6)
-size = Vector3(2, 2, 8)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D5" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 5.5, -7)
-size = Vector3(2, 2, 6)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="Environment/CSGCombiner3D"]
-size = Vector3(20, 1, 20)
-material = SubResource("StandardMaterial3D_tc26a")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment/CSGCombiner3D"]
-transform = Transform3D(0.965926, 0.12941, -0.224144, 0, 0.866025, 0.5, 0.258819, -0.482963, 0.836516, 0, -2.21196, -3)
-
-[node name="Menu" type="Control" parent="."]
+[node name="MultiplayerChat" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerChat"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -261.0
+offset_right = 369.0
+grow_vertical = 0
+alignment = 2
+
+[node name="Chat" type="TextEdit" parent="MultiplayerChat/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("3_icc4p")
+text = "
+"
+editable = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MultiplayerChat/VBoxContainer"]
+layout_mode = 2
+
+[node name="Message" type="LineEdit" parent="MultiplayerChat/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_icc4p")
+
+[node name="Send" type="Button" parent="MultiplayerChat/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_icc4p")
+text = "Send"
+
+[node name="Menu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="ColorRect" type="ColorRect" parent="Menu"]
 layout_mode = 1
@@ -434,89 +273,16 @@ theme_override_font_sizes/font_size = 35
 text = "QUIT"
 flat = true
 
-[node name="MultiplayerChat" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -638.0
-offset_bottom = -224.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="ChatTitle" type="Label" parent="MultiplayerChat"]
-top_level = true
-layout_mode = 2
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -561.0
-offset_top = -296.0
-offset_right = -77.0
-offset_bottom = -278.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 8
-theme_override_fonts/font = ExtResource("3_icc4p")
-text = "Welcome to Global Chat!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Chat" type="TextEdit" parent="MultiplayerChat"]
-layout_mode = 0
-offset_left = 15.0
-offset_top = 22.0
-offset_right = 499.0
-offset_bottom = 327.0
-theme_override_fonts/font = ExtResource("3_icc4p")
-text = "
-"
-
-[node name="Message" type="LineEdit" parent="MultiplayerChat"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.038
-anchor_top = 0.214
-anchor_right = 0.038
-anchor_bottom = 0.214
-offset_left = -4.776
-offset_top = 243.328
-offset_right = 479.224
-offset_bottom = 274.328
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("3_icc4p")
-
-[node name="Send" type="Button" parent="MultiplayerChat"]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -499.0
-offset_top = 161.0
-offset_right = -452.0
-offset_bottom = 192.0
-grow_horizontal = 0
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("3_icc4p")
-text = "Send"
-
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://cffjduipbb3s5")
 spawn_path = NodePath("../PlayersContainer")
 
 [node name="WorldCamera" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18, 0)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 13, 34, -19)
 script = ExtResource("6_enyjo")
 
 [node name="Camera3D" type="Camera3D" parent="WorldCamera"]
-transform = Transform3D(-2.18557e-08, 0.866025, -0.5, 3.78552e-08, 0.5, 0.866025, 1, 1.77636e-15, -4.37114e-08, -21.3198, 23.6791, 0)
+transform = Transform3D(-1.13133e-08, 0.965926, -0.258819, 4.2222e-08, 0.258819, 0.965926, 1, -1.93019e-14, -4.37114e-08, -51.3198, 41.6791, 0)
 
 [node name="PlayersContainer" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.041748, -4.76837e-07, -0.00557041)
@@ -530,7 +296,13 @@ anchors_preset = 0
 offset_right = 173.0
 offset_bottom = 150.0
 
+[node name="HiderSpawn" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 14, 0)
+
+[node name="SeekerSpawn" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 4, 0)
+
+[connection signal="pressed" from="MultiplayerChat/VBoxContainer/HBoxContainer/Send" to="." method="_on_send_pressed"]
 [connection signal="pressed" from="Menu/MainContainer/MainMenu/VBoxContainer2/Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Menu/MainContainer/MainMenu/VBoxContainer2/Buttons2/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="Menu/MainContainer/MainMenu/VBoxContainer2/Option4/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="MultiplayerChat/Send" to="." method="_on_send_pressed"]

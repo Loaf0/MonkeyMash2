@@ -1,0 +1,374 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcm2jbg48g5aj"]
+
+[ext_resource type="Texture2D" uid="uid://chawqtd3fcydp" path="res://assets/2d/textures/test/texture_01.png" id="1_bbylb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tc26a"]
+albedo_color = Color(0.26169, 0.66, 0.1914, 1)
+albedo_texture = ExtResource("1_bbylb")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+grow_amount = 0.337
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_enyjo"]
+albedo_texture = ExtResource("1_bbylb")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+grow_amount = 0.337
+
+[node name="CSGCombiner3D" type="CSGCombiner3D"]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+use_collision = true
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 3.5, 0)
+size = Vector3(17, 8, 20)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D31" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4, 0.5)
+operation = 2
+size = Vector3(15, 6, 17)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D32" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2.5, 9)
+operation = 2
+size = Vector3(2, 3, 5)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D12" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 10, 0)
+size = Vector3(1, 5, 20)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D38" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.2594, 15.6667, -24.1667)
+size = Vector3(1, 11, 5)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D40" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.5, 20.6667, -22.1667)
+size = Vector3(17, 1, 9)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D44" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.5, 20.6667, -22.1667)
+size = Vector3(25, 1, 33)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D45" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.5, 26.6667, -22.1667)
+size = Vector3(15, 1, 25)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D46" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 30.6667, -27)
+size = Vector3(1, 1, 8)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D57" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.3333, 35.3333, -27)
+size = Vector3(1, 1, 8)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D47" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.8333, 24.1667, -33.5)
+size = Vector3(1, 6, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D48" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1667, 24.1667, -33.5)
+size = Vector3(1, 6, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D51" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 29, -31)
+size = Vector3(1, 5, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D53" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.3333, 29, -31)
+size = Vector3(1, 5, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D54" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.3333, 33.6667, -31)
+size = Vector3(1, 5, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D52" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 29, -23)
+size = Vector3(1, 5, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D55" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.3333, 29, -23)
+size = Vector3(1, 5, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D56" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.3333, 33.6667, -23)
+size = Vector3(1, 5, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D49" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1667, 24.1667, -10.8333)
+size = Vector3(1, 6, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D50" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53.8333, 24.1667, -10.8333)
+size = Vector3(1, 6, 1)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D41" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 20.6667, -19.6667)
+size = Vector3(9, 1, 4)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D39" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.3248, 15.6667, -21.5883)
+size = Vector3(4.66821, 11, 0.82959)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D13" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6667, 7.00611, 9.83333)
+size = Vector3(4, 0.988403, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D14" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.6667, 7.00611, -0.166666)
+size = Vector3(2, 0.988403, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D42" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0.5, 4.5)
+size = Vector3(11, 0.988403, 22)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D61" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.1667, 1.83333, 14.5)
+size = Vector3(2, 0.988403, 2)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D62" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.8333, 3.16667, 14.5)
+size = Vector3(2, 0.988403, 2)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D63" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 4.5, 14.5)
+size = Vector3(2, 0.988403, 2)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D64" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 5.83333, 13.1667)
+size = Vector3(2, 0.988403, 2)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D65" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 7.16667, 11.1667)
+size = Vector3(2, 0.988403, 2)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D15" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6667, 7.00611, -9.33333)
+size = Vector3(4, 0.988403, 4)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D16" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 14.6667, 8.33944, -15.0313)
+size = Vector3(12, 0.988403, 13)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D18" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 10, 11.6728, -40.3647)
+size = Vector3(4, 0.988403, 13)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D19" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.874865, -0.484367, 0, 0.484367, 0.874865, 14, 13.0061, -39.698)
+size = Vector3(4, 0.988403, 13)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D20" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.719692, -0.694294, 0, 0.694294, 0.719692, 18, 13.8656, -38.3647)
+size = Vector3(4, 0.988403, 13)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D21" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.515472, -0.856907, 0, 0.856907, 0.515472, 22, 13.8656, -36.3647)
+size = Vector3(4, 0.988403, 13)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D17" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 1.98682e-08, 0, -1.98682e-08, 1, 16.1667, 10.0039, -27.6774)
+size = Vector3(17, 0.988403, 13)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9903, 0.5, 13.465)
+size = Vector3(4, 2, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5097, 1.5, 13.465)
+size = Vector3(7, 2, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5097, 7.5, 13.465)
+size = Vector3(3, 10, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D9" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5097, 7.5, 13.465)
+size = Vector3(3, 2, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D10" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5097, 10.5, 13.465)
+size = Vector3(3, 2, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D11" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5097, 10.5, 3.46501)
+size = Vector3(3, 2, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D22" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -24, 16, 1)
+size = Vector3(1, 11, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D23" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, -0.00198967, 0.999998, 0, 0.999998, 0.00198967, -1, 8.69714e-11, -4.37113e-08, -24, 16, 5)
+size = Vector3(1, 11, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D24" type="CSGBox3D" parent="."]
+transform = Transform3D(-2.18557e-08, -0.867018, 0.498276, -3.78552e-08, 0.498276, 0.867018, -1, 8.6968e-11, -4.37113e-08, -49, 24, 5.66667)
+size = Vector3(1, 11, 4)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D25" type="CSGBox3D" parent="."]
+transform = Transform3D(-2.18557e-08, -0.867018, 0.498276, -3.78552e-08, 0.498276, 0.867018, -1, 8.6968e-11, -4.37113e-08, -49, 24, 2)
+size = Vector3(1, 11, 4)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D58" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 1.44329e-15, 0, -1.89478e-14, -0.00198967, 0.999998, 5.9294e-15, -0.999998, -0.00198967, -43.637, 22.254, 3.46256)
+operation = 2
+size = Vector3(3, 7, 6.46289)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D59" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 1.44329e-15, 0, -1.89478e-14, -0.00198967, 0.999998, 5.9294e-15, -0.999998, -0.00198967, -54.3037, 27.5814, 3.7959)
+operation = 2
+size = Vector3(3, 7, 6.46289)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D26" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -33.843, 21, 3.3039)
+size = Vector3(18, 1, 25)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D24" type="CSGBox3D" parent="CSGBox3D26"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.336914, 0, 9.84877)
+operation = 2
+size = Vector3(2.88461, 1, 4)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D27" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.52342, 1, 4.80392)
+size = Vector3(5, 1, 1.73291)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D29" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.52342, 1.26666, 7.13433)
+size = Vector3(0.339178, 1.53333, 1.73291)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D37" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.52342, 1.26666, 2.46766)
+size = Vector3(0.339178, 1.53333, 1.73291)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D30" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.157, 1.26666, -3.53234)
+size = Vector3(0.339178, 1.53333, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D33" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.157, 1, -5.86275)
+size = Vector3(5, 1, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D34" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.157, 1.5, -8.03536)
+size = Vector3(0.654785, 2, 3)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D35" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.453, 1.0791, -7.05328)
+size = Vector3(0.91333, 1.1582, 1.35791)
+material = SubResource("StandardMaterial3D_enyjo")
+
+[node name="CSGBox3D36" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.8771, 1.0791, -7.05328)
+size = Vector3(0.91333, 1.1582, 1.35791)
+material = SubResource("StandardMaterial3D_enyjo")
+
+[node name="CSGBox3D28" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8.93455, 1.5, 4.80392)
+size = Vector3(5, 2, 0.555176)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.5, -5)
+size = Vector3(2, 2, 10)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3.5, -6)
+size = Vector3(2, 2, 8)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 5.5, -7)
+size = Vector3(2, 2, 6)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+size = Vector3(20, 1, 20)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGBox3D43" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, -2.5, 0)
+size = Vector3(20, 6, 20)
+material = SubResource("StandardMaterial3D_tc26a")
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="CSGBox3D43"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.66667, 3.05443, 6.66667)
+operation = 2
+radius = 3.0
+
+[node name="CSGTorus3D" type="CSGTorus3D" parent="CSGBox3D43"]
+transform = Transform3D(1, 0, 0, 0, 1.98682e-08, 1, 0, -1, 1.98682e-08, -2.19626, 5.18037, -6.05232)
+operation = 2
+inner_radius = 3.43466
+outer_radius = 7.23186
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGBox3D43"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.27106, 2.65473, 0.405564)
+operation = 2
+radius = 2.58252
+height = 3.25977
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.965926, 0.12941, -0.224144, 0, 0.866025, 0.5, 0.258819, -0.482963, 0.836516, 0, -2.21196, -3)
+
+[node name="CSGBox3D60" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 24.7797, 3.83333)
+size = Vector3(9, 1, 7)
+material = SubResource("StandardMaterial3D_tc26a")

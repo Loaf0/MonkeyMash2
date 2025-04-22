@@ -5,6 +5,9 @@ enum State {
 	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, BONK
 }
 
+@onready var seeker_spawn = $".".seeker_spawn
+@onready var hider_spawn = $".".hider_spawn
+
 @export_category("General")
 @export var gravity := -12.0
 
@@ -41,8 +44,7 @@ var ground_pound_timer := 0.0
 var ground_pound_started := false
 
 @export_category("Dive")
-@export var dive_speed := 8.0
-@export var dive_horizontal_speed := 5.0
+@export var dive_horizontal_speed := 6.0
 @export var dive_upward_boost := 6.0
 @export var dive_air_modifier := 0.1
 @export var max_dive_duration := 2.5
@@ -93,6 +95,9 @@ var bonk_cast
 
 var current_state: State = State.FALL
 
+@export var team : String 
+@onready var tag_box = $TagBox
+
 @onready var nickname: Label3D = $PlayerNick/Nickname
 
 @export_category("Objects")
@@ -122,7 +127,12 @@ func _ready():
 		pass
 
 func _physics_process(delta):
-	if not is_multiplayer_authority(): return
+	if !is_multiplayer_authority():
+		#var local_team = Network.players[multiplayer.get_unique_id()]["team"]
+		#nickname.visible = local_team == team
+		return
+	
+	nickname.hide()
 	
 	var current_scene = get_tree().get_current_scene()
 	if current_scene and current_scene.has_method("is_chat_visible") and current_scene.is_chat_visible() and is_on_floor():
@@ -399,7 +409,7 @@ func move_character(delta):
 	move_and_slide()
 
 func _check_fall_and_respawn():
-	if global_transform.origin.y < -15.0:
+	if global_transform.origin.y < -50.0 or global_transform.origin.y > 400.0 or Input.is_action_just_pressed("respawn"):
 		_respawn()
 		
 func _respawn():
@@ -440,11 +450,11 @@ func set_mesh_texture(mesh_instance: MeshInstance3D, texture: CompressedTexture2
 			new_material.albedo_texture = texture
 			mesh_instance.set_surface_override_material(0, new_material)
 
-func perform_spin(delta):
+func perform_spin(_delta):
 	#float/jump/attack thing
 	pass
 
-func perform_dive(delta):
+func perform_dive(_delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")
 	var flat_forward = Vector3.FORWARD.rotated(Vector3.UP, camera.global_transform.basis.get_euler().y)
 	var flat_right = Vector3.RIGHT.rotated(Vector3.UP, camera.global_transform.basis.get_euler().y)
@@ -464,10 +474,8 @@ func perform_dive(delta):
 		rotation.y = target_angle
 
 func update_debug_menu():
-	if position.y < -30:
-		position = Vector3(position.x, 100, position.z)
-	
 	$Control/Label.text = " Position : " + str(round_vector3(position)) + "\n Velocity : " + str(round_vector3(velocity)) + "\n State : " + str(State.keys()[current_state])
+	$Control/Label.text += "\n Team : " + team
 
 func round_vector3(vec: Vector3) -> Vector3:
 	return Vector3(round(vec.x * 10.0) / 10.0, round(vec.y * 10.0) / 10.0, round(vec.z * 10.0) / 10.0)
@@ -501,3 +509,27 @@ func jump():
 	jump_hold_timer = jump_hold_time
 	jump_held = true
 	jump_buffer_timer = 0.0
+
+func _on_tag_box_body_entered(body: Node3D) -> void:
+	if not body.is_in_group("player") or team == "hider":
+		return
+
+	if body.team == "hider":
+		var level = get_tree().get_root().get_node("Level")
+		if level and multiplayer.get_unique_id() != 1:
+			level.rpc_id(1, "tag_hider", self.name, body.name)
+
+
+
+func set_team(team_name: String):
+	team = team_name
+	update_collision_layers()
+
+func update_collision_layers():
+	if not $CollisionShape3D:
+		return
+	match team:
+		"hider":
+			pass
+		"seeker":
+			pass

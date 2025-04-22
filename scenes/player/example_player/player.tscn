@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=4 uid="uid://cffjduipbb3s5"]
+[gd_scene load_steps=47 format=4 uid="uid://cffjduipbb3s5"]
 
 [ext_resource type="Script" uid="uid://b1k0mt31lc71h" path="res://scenes/player/example_player/player.gd" id="1_tdh26"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://assets/3d/Models/player/3DGodotRobot_GodotPalette.png" id="1_w11jc"]
@@ -4775,7 +4775,7 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath("3DGodotRobot/AnimationPlayer:current_animation")
 properties/2/spawn = true
 properties/2/replication_mode = 1
-properties/3/path = NodePath("PlayerNick/Nickname:text")
+properties/3/path = NodePath(".:team")
 properties/3/spawn = true
 properties/3/replication_mode = 1
 
@@ -4785,9 +4785,13 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 10
 shadow_color = Color(0, 0, 0, 0.647059)
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body")]
+[sub_resource type="SphereShape3D" id="SphereShape3D_n2ifj"]
+radius = 1.43445
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body") groups=["player"]]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
-collision_mask = 3
+collision_layer = 7
+collision_mask = 7
 script = ExtResource("1_tdh26")
 _body = NodePath("3DGodotRobot")
 blue_texture = ExtResource("4_max2b")
@@ -5042,3 +5046,13 @@ text = "Velocity :
 Position :
 State : "
 label_settings = SubResource("LabelSettings_n2ifj")
+
+[node name="TagBox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 7
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TagBox"]
+shape = SubResource("SphereShape3D_n2ifj")
+
+[connection signal="body_entered" from="TagBox" to="." method="_on_tag_box_body_entered"]

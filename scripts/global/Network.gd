@@ -7,7 +7,8 @@ const MAX_PLAYERS : int = 10
 var players = {}
 var player_info = {
 	"nick" : "host",
-	"skin" : "blue"
+	"skin" : "blue",
+	"team" : "hider"
 }
 
 signal player_connected(peer_id, player_info)
@@ -53,6 +54,7 @@ func join_game(nickname: String, skin_color: String, address: String = SERVER_AD
 		skin_color = "blue"
 	player_info["nick"] = nickname
 	player_info["skin"] = skin_color
+	player_info["skin"] = "hider"
 	
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()

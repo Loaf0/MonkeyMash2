@@ -2,7 +2,9 @@ extends CharacterBody3D
 class_name Character
 
 enum State {
-	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, BONK
+	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, 
+	WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, 
+	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1
 }
 
 @onready var seeker_spawn = $".".seeker_spawn
@@ -20,6 +22,8 @@ enum State {
 @export var low_jump_multiplier := 2.8
 @export var max_fall_speed := -20.0
 @export var coyote_time_max := 0.15
+@export var long_jump_forward_speed = 16.0
+@export var long_jump_upward_speed = 8.0
 
 @export_category("Movement")
 @export var move_speed := 7.0
@@ -57,6 +61,7 @@ var dive_air_influence = standard_air_influence * dive_air_modifier
 var bonk_timer := 0.0
 var stunned_timer := 0.0
 var just_bonked = true
+var just_long_jumped = true
 
 @export_category("Ground Pound Recovery")
 @export var ground_pound_recovery_time := 0.25
@@ -66,7 +71,7 @@ var recovery_timer := 0.0
 @export_category("Wall Interactions")
 @export var wall_slide_min_speed := -1.0
 @export var wall_slide_max_speed := -6.0
-@export var wall_jump_force := Vector3(-7.5, 10, 0)
+@export var wall_jump_force := Vector3(-3.0, 10, 0)
 @export var wall_slide_lerp_duration := 3.0
 @export var wall_jump_input_lock_duration := 0.15
 var wall_jump_lock_timer := 0.0
@@ -147,7 +152,7 @@ func _physics_process(delta):
 	move_character(delta)
 	move_and_slide()
 	
-	_body.animate(velocity)
+	_body.animate(current_state)
 	_check_fall_and_respawn()
 
 func update_timers(delta):
@@ -192,6 +197,11 @@ func update_state(delta):
 				current_state = State.WALK
 			else:
 				current_state = State.IDLE
+			if Input.is_action_just_pressed("Emote1"):
+				current_state = State.EMOTE1
+				
+			if Input.is_action_pressed("ground_pound"):
+				current_state = State.CROUCH
 
 		State.JUMP:
 			if velocity.y < 0:
@@ -203,7 +213,7 @@ func update_state(delta):
 
 		State.FALL:
 			if is_on_floor():
-				current_state = State.LAND
+				current_state = State.LAND if !Input.is_action_pressed("ground_pound") else State.CROUCH
 			elif Input.is_action_just_pressed("ground_pound"):
 				current_state = State.GROUND_POUND
 				ground_pound_started = false
@@ -320,12 +330,43 @@ func update_state(delta):
 				if stunned_timer <= 0.0:
 					just_bonked = true
 					current_state = State.LAND
+		State.EMOTE1:
+			if $"3DGodotRobot/AnimationPlayer".is_playing() and $"3DGodotRobot/AnimationPlayer".current_animation == "Emote1":
+				return
+			current_state = State.IDLE
+		
+		State.CROUCH:
+			if !is_on_floor():
+				current_state = State.FALL
+				return
+			if !Input.is_action_pressed("ground_pound"):
+				current_state = State.IDLE
+				return
+			if Input.is_action_just_pressed("jump"): 
+				if velocity.length() > 1.0:
+					just_long_jumped = true
+					current_state = State.LONG_JUMP
+				else:
+					velocity.y = jump_force * ground_pound_jump_multiplier
+					current_state = State.JUMP
+					jump_hold_timer = jump_hold_time
+					jump_held = true
+		
+		State.LONG_JUMP:
+			if just_long_jumped:
+				var forward = -transform.basis.z.normalized()
+				velocity = forward * long_jump_forward_speed
+				velocity.y = long_jump_upward_speed
+			just_long_jumped = false
+			if(velocity.y < 0):
+				current_state = State.FALL
 
+		
 func freeze():
 	velocity.x = 0
 	velocity.z = 0
 	_current_speed = 0
-	_body.animate(Vector3.ZERO)
+	_body.animate(current_state)
 
 func handle_input():
 	if camera == null:
@@ -368,10 +409,10 @@ func move_character(delta):
 		move_and_slide()
 		return
 	
-	if current_state == State.BONK:
+	if current_state == State.BONK || current_state == State.EMOTE1 || current_state == State.CROUCH:
 		direction = Vector3(0, 0, 0)
 		
-	if (current_state == State.DIVE):
+	if (current_state == State.DIVE || current_state == State.WALL_JUMP):
 		air_influence = dive_air_influence
 	else:
 		air_influence = standard_air_influence
@@ -381,7 +422,6 @@ func move_character(delta):
 		
 	var input_magnitude = direction.length()
 	var move_direction = direction.normalized() if input_magnitude > 0.05 else Vector3.ZERO
-	
 	if input_magnitude > 0.05:
 		var target_angle = atan2(-move_direction.x, -move_direction.z)
 		var angle_diff = abs(rad_to_deg(wrapf(target_angle - rotation.y, -PI, PI)))
@@ -519,17 +559,5 @@ func _on_tag_box_body_entered(body: Node3D) -> void:
 		if level and multiplayer.get_unique_id() != 1:
 			level.rpc_id(1, "tag_hider", self.name, body.name)
 
-
-
 func set_team(team_name: String):
 	team = team_name
-	update_collision_layers()
-
-func update_collision_layers():
-	if not $CollisionShape3D:
-		return
-	match team:
-		"hider":
-			pass
-		"seeker":
-			pass

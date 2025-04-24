@@ -3,6 +3,12 @@ class_name Body
 
 const LERP_VELOCITY: float = 0.15
 
+enum State {
+	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, 
+	WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, 
+	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1
+}
+
 @export_category("Objects")
 @export var _character: CharacterBody3D = null
 @export var animation_player: AnimationPlayer = null
@@ -13,24 +19,35 @@ func apply_rotation(_velocity: Vector3) -> void:
 	
 	rpc("sync_player_rotation", new_rotation_y)
 	
-func animate(_velocity: Vector3) -> void:
-	if not _character.is_on_floor():
-		if _velocity.y < 0:
-			animation_player.play("Fall")
-		else:
-			animation_player.play("Jump")
-		return
-
-	if _velocity: 
-		if _velocity.length() > 3.0 and _character.is_on_floor():
+func animate(state) -> void:
+	
+	match state:
+		State.IDLE, State.LAND:
+			animation_player.play("Idle")
+		State.WALK:
+			animation_player.play("Run")
+		State.RUN:
 			animation_player.play("Sprint")
-			return
-		
-		animation_player.play("Run")
-		return
-	
-	animation_player.play("Idle")
-	
+		State.JUMP:
+			animation_player.play("Jump")
+		State.FALL:
+			animation_player.play("Fall")
+		State.CROUCH, State.GROUND_POUND, State.GROUND_POUND_RECOVERY:
+			animation_player.play("Crouch")
+		State.SLIDE:
+			animation_player.play("GroundSlide")
+		State.LONG_JUMP:
+			animation_player.play("LongJump")
+		State.DIVE, State.BONK:
+			animation_player.play("Dive")
+		State.WALL_SLIDE:
+			animation_player.play("WallSlide")
+		State.WALL_JUMP:
+			animation_player.play("WallJump")
+		State.EMOTE1:
+			animation_player.play("Emote1")
+	pass
+
 @rpc("any_peer", "reliable")
 func sync_player_rotation(rotation_y: float) -> void:
 	rotation.y = rotation_y

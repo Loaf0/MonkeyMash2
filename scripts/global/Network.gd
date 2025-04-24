@@ -54,7 +54,7 @@ func join_game(nickname: String, skin_color: String, address: String = SERVER_AD
 		skin_color = "blue"
 	player_info["nick"] = nickname
 	player_info["skin"] = skin_color
-	player_info["skin"] = "hider"
+	player_info["team"] = "hider"
 	
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()

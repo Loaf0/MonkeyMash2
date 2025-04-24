@@ -22,8 +22,8 @@ enum State {
 @export var low_jump_multiplier := 2.8
 @export var max_fall_speed := -20.0
 @export var coyote_time_max := 0.15
-@export var long_jump_forward_speed = 16.0
-@export var long_jump_upward_speed = 8.0
+@export var long_jump_forward_speed = 14.0
+@export var long_jump_upward_speed = 10.0
 
 @export_category("Movement")
 @export var move_speed := 7.0
@@ -41,6 +41,8 @@ var air_influence := standard_air_influence
 @export var max_snap_angle := 45.0
 @export var turn_slowdown_threshold := 110.0
 @export var turn_slowdown_multiplier := 0.9
+var slide_speed = 10.0
+var slide_accel = 20.0
 
 @export_category("Ground Pound")
 @export var ground_pound_speed := -16.0
@@ -119,7 +121,6 @@ var current_state: State = State.FALL
 @export var green_texture : CompressedTexture2D
 @export var red_texture : CompressedTexture2D
 
-var _current_speed: float
 var _respawn_point = Vector3(0, 5, 0)
 
 func _enter_tree():
@@ -133,6 +134,9 @@ func _enter_tree():
 		$Control.hide()
 	
 func _ready():
+	floor_snap_length = 1.0
+	#floor_max_angle = 
+	
 	if multiplayer.is_server():
 		pass
 
@@ -370,9 +374,11 @@ func update_state(delta):
 			if !is_on_floor():
 				current_state = State.FALL
 				return
+
 			if !Input.is_action_pressed("ground_pound"):
 				current_state = State.IDLE
 				return
+
 			if Input.is_action_just_pressed("jump"): 
 				if velocity.length() > 1.0:
 					just_long_jumped = true
@@ -437,6 +443,26 @@ func apply_gravity(delta):
 
 func move_character(delta):
 	
+	var tilt_strength = 8.0
+	var tilt_return_strength = 15.0
+	var forward_dir = -transform.basis.z.normalized()
+	var right_dir
+	var up_dir
+
+	if is_on_floor():
+		var floor_normal = get_floor_normal().normalized()
+		right_dir = forward_dir.cross(floor_normal).normalized()
+		up_dir = floor_normal
+	else:
+		# Smoothly lerp the up direction back to Vector3.UP when airborne
+		up_dir = transform.basis.y.lerp(Vector3.UP, delta * tilt_return_strength).normalized()
+		right_dir = forward_dir.cross(up_dir).normalized()
+		forward_dir = up_dir.cross(right_dir).normalized()
+
+	var target_basis = Basis(right_dir, up_dir, -forward_dir)
+	transform.basis = transform.basis.slerp(target_basis.orthonormalized(), delta * tilt_strength)
+
+	
 	var target_speed = run_speed if current_state == State.RUN else walk_speed
 
 	move_speed = lerp(move_speed, target_speed, delta * 5.0)
@@ -473,6 +499,7 @@ func move_character(delta):
 		current_speed = lerp(current_speed, 0.0, momentum_deceleration * delta)
 	
 	var desired_velocity = move_direction * current_speed
+
 	
 	if is_on_floor():
 		velocity.x = lerp(velocity.x, desired_velocity.x, acceleration * delta)

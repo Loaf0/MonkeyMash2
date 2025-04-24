@@ -49,26 +49,32 @@ func handle_controller_input(delta: float) -> void:
 			yaw -= move_x * right_stick_influence * delta
 
 	rotation_degrees = Vector3(pitch, yaw, 0)
-
 func update_camera_position(delta: float) -> void:
-	if player:
-		var player_speed = 50
-		if player.has_method("get_speed"):
-			player_speed = player.get_speed()
+	if not player:
+		return
 
-		camera_dist = lerp(min_camera_dist, max_camera_dist, player_speed / speed_zoom_mod)
-		camera_dist = clamp(camera_dist, min_camera_dist, max_camera_dist)
+	if global_position.distance_to(player.global_position) > 50:
+		global_position = player.global_position
 
-		var target_pos = global_position
-		target_pos.y = player.global_position.y + camera_height
-		target_pos = target_pos.move_toward(
-			Vector3(player.global_position.x, player.global_position.y + camera_height, player.global_position.z),
-			delta * follow_behind_strength
-		)
-		global_position = target_pos
+	var player_speed = 50
+	if player.has_method("get_speed"):
+		player_speed = player.get_speed()
+
+	camera_dist = clamp(
+		lerp(min_camera_dist, max_camera_dist, player_speed / speed_zoom_mod),
+		min_camera_dist,
+		max_camera_dist
+	)
+
+	var target_pos = global_position
+	target_pos.y = player.global_position.y + camera_height
+	target_pos = target_pos.move_toward(
+		Vector3(player.global_position.x, player.global_position.y + camera_height, player.global_position.z),
+		delta * follow_behind_strength
+	)
+	global_position = target_pos
 
 	var target_offset = Vector3(0, 0, camera_dist)
-
 	camera.position = camera.position.move_toward(target_offset, delta * move_smooth)
 
 func set_player(p):

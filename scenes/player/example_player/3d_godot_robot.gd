@@ -10,7 +10,6 @@ enum State {
 }
 
 @export_category("Objects")
-@export var _character: CharacterBody3D = null
 @export var animation_player: AnimationPlayer = null
 
 func apply_rotation(_velocity: Vector3) -> void:
@@ -20,7 +19,6 @@ func apply_rotation(_velocity: Vector3) -> void:
 	rpc("sync_player_rotation", new_rotation_y)
 	
 func animate(state) -> void:
-	
 	match state:
 		State.IDLE, State.LAND:
 			animation_player.play("Idle")
@@ -46,7 +44,6 @@ func animate(state) -> void:
 			animation_player.play("WallJump")
 		State.EMOTE1:
 			animation_player.play("Emote1")
-	pass
 
 @rpc("any_peer", "reliable")
 func sync_player_rotation(rotation_y: float) -> void:

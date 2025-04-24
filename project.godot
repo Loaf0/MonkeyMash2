@@ -20,9 +20,9 @@ config/icon="res://assets/2d/textures/icon.svg"
 [autoload]
 
 Settings="*res://scripts/global/Settings.gd"
-GameManager="*res://scripts/global/GameManager.gd"
 MouseLock="*res://scripts/player/mouse_lock.gd"
 Network="*res://scripts/global/Network.gd"
+Global="*res://scripts/global/Global.gd"
 
 [file_customization]
 

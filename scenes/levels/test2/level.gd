@@ -34,6 +34,7 @@ func _on_player_connected(peer_id, player_info):
 		var player_data = Network.players[id]
 		if id != peer_id:
 			rpc_id(peer_id, "sync_player_skin", id, player_data["skin"])
+			rpc_id(peer_id, "sync_player_name", id, player_data["nick"])
 			rpc_id(peer_id, "sync_player_team", id, player_data["team"])
 	_add_player(peer_id, player_info)
 
@@ -46,25 +47,21 @@ func _on_host_pressed():
 func _on_join_pressed():
 	menu.hide()
 	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges().to_lower(), address_input.text.strip_edges(), int(port_input.text))
-	
+
 func _add_player(id: int, player_info : Dictionary):
 	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:
 		return
 
 	var player = player_scene.instantiate()
 	player.name = str(id)
-	
-	#spawn based on team value
+
 	var team = player_info["team"]
+	player.set_team(team)
 	player.position = get_spawn_point(team)
 	players_container.add_child(player, true)
 
-	var nick = Network.players[id]["nick"]
-	player.rpc("change_nick", nick)
-	
-	var skin_name = player_info["skin"]
-	rpc("sync_player_skin", id, skin_name)
-	
+	rpc("sync_player_name", id, player_info["nick"])
+	rpc("sync_player_skin", id, player_info["skin"])
 	rpc("sync_player_position", id, player.position)
 	rpc("sync_player_team", id, team)
 
@@ -88,6 +85,16 @@ func sync_player_team(id: int, team_name: String):
 	if player:
 		player.set_team(team_name)
 		player.position = get_spawn_point(team_name)
+
+		if id == multiplayer.get_unique_id():
+			Global.local_player_team = team_name
+
+@rpc("any_peer", "call_local")
+func sync_player_name(id: int, nickname: String):
+	if id == 1: return # ignore host
+	var player = players_container.get_node(str(id))
+	if player:
+		player.change_nick(nickname)
 
 @rpc("any_peer", "call_local")
 func sync_player_position(id: int, new_position: Vector3):
@@ -182,13 +189,16 @@ func _on_reset_game():
 
 @rpc("any_peer", "call_local")
 func tag_hider(seeker_id: String, hider_id: String):
-	var seeker = players_container.get_node_or_null(seeker_id)
 	var hider = players_container.get_node_or_null(hider_id)
-
-	if not seeker or not hider:
+	if not hider:
 		return
 
-	if seeker.team != "seeker" or hider.team == "seeker":
+	if seeker_id != "server":
+		var seeker = players_container.get_node_or_null(seeker_id)
+		if not seeker or seeker.team != "seeker":
+			return
+
+	if hider.team == "seeker":
 		return
 
 	hider.team = "seeker"

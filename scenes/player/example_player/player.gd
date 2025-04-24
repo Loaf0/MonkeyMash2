@@ -27,11 +27,13 @@ enum State {
 
 @export_category("Movement")
 @export var move_speed := 7.0
+@export var run_speed = 9.0
+@export var walk_speed = 7.0
 @export var acceleration := 15.0
 @export var momentum_acceleration := 3.0
-@export var momentum_deceleration := 20.0
+@export var momentum_deceleration := 30.0
 @export var ground_deceleration := 30.0 
-@export var ground_acceleration := 10.0
+@export var ground_acceleration := 15.0
 @export var air_deceleration := 0.0
 @export var air_acceleration := 8.0 
 @export var standard_air_influence := 0.3
@@ -71,11 +73,14 @@ var recovery_timer := 0.0
 @export_category("Wall Interactions")
 @export var wall_slide_min_speed := -1.0
 @export var wall_slide_max_speed := -6.0
-@export var wall_jump_force := Vector3(-3.0, 10, 0)
+@export var wall_jump_force := Vector3(-8.0, 10, 0)
 @export var wall_slide_lerp_duration := 3.0
 @export var wall_jump_input_lock_duration := 0.15
 var wall_jump_lock_timer := 0.0
 var wall_slide_timer := 0.0
+
+var walk_time: float = 0.0
+const TIME_TO_RUN: float = 1.5
 
 @export_category("Buffers")
 @export var jump_buffer_time := 0.15
@@ -132,11 +137,14 @@ func _ready():
 		pass
 
 func _physics_process(delta):
+	$PlayerNick/Team.text = team 
+
 	if !is_multiplayer_authority():
-		#var local_team = Network.players[multiplayer.get_unique_id()]["team"]
-		#nickname.visible = local_team == team
+		nickname.visible = (Global.local_player_team == team)
 		return
-	
+
+	$PlayerNick/Team.text = team
+	Global.local_player_team = team
 	nickname.hide()
 	
 	var current_scene = get_tree().get_current_scene()
@@ -188,21 +196,44 @@ func update_timers(delta):
 
 func update_state(delta):
 	match current_state:
-		State.IDLE, State.WALK, State.RUN:
+		State.IDLE, State.WALK:
 			if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 				jump()
 			elif !is_on_floor():
 				current_state = State.FALL
 			elif direction.length() > 0.1:
-				current_state = State.WALK
+				walk_time += delta
+				if walk_time >= TIME_TO_RUN:
+					current_state = State.RUN
+				else:
+					current_state = State.WALK
 			else:
 				current_state = State.IDLE
+				walk_time = 0.0
+
 			if Input.is_action_just_pressed("Emote1"):
 				current_state = State.EMOTE1
-				
+
 			if Input.is_action_pressed("ground_pound"):
 				current_state = State.CROUCH
+		
+		State.RUN:
+			if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
+				jump()
+			elif !is_on_floor():
+				current_state = State.FALL
+			elif direction.length() > 0.1:
+				current_state = State.RUN
+			else:
+				current_state = State.IDLE
+				walk_time = 0.0
 
+			if Input.is_action_just_pressed("Emote1"):
+				current_state = State.EMOTE1
+
+			if Input.is_action_pressed("ground_pound"):
+				current_state = State.CROUCH
+	
 		State.JUMP:
 			if velocity.y < 0:
 				current_state = State.FALL
@@ -361,22 +392,24 @@ func update_state(delta):
 			if(velocity.y < 0):
 				current_state = State.FALL
 
-		
 func freeze():
-	velocity.x = 0
-	velocity.z = 0
-	_current_speed = 0
-	_body.animate(current_state)
+	pass
 
 func handle_input():
 	if camera == null:
-		camera = $SpringArmOffset/SpringArm3D/Camera3D
 		return
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")
+
 	var cam_basis = camera.global_transform.basis
+
 	var cam_forward = -cam_basis.z
+	cam_forward.y = 0
+	cam_forward = cam_forward.normalized()
+
 	var cam_right = cam_basis.x
+	cam_right.y = 0
+	cam_right = cam_right.normalized()
 
 	direction = (cam_forward * input_dir.y + cam_right * input_dir.x).normalized()
 
@@ -403,16 +436,21 @@ func apply_gravity(delta):
 	velocity.y = max(velocity.y, max_fall_speed)
 
 func move_character(delta):
+	
+	var target_speed = run_speed if current_state == State.RUN else walk_speed
+
+	move_speed = lerp(move_speed, target_speed, delta * 5.0)
+	
 	if current_state in [State.GROUND_POUND, State.GROUND_POUND_RECOVERY]:
 		velocity.x = 0
 		velocity.z = 0
 		move_and_slide()
 		return
 	
-	if current_state == State.BONK || current_state == State.EMOTE1 || current_state == State.CROUCH:
+	if current_state == State.BONK || current_state == State.CROUCH || current_state == State.EMOTE1:
 		direction = Vector3(0, 0, 0)
 		
-	if (current_state == State.DIVE || current_state == State.WALL_JUMP):
+	if (current_state == State.DIVE):
 		air_influence = dive_air_influence
 	else:
 		air_influence = standard_air_influence
@@ -422,6 +460,7 @@ func move_character(delta):
 		
 	var input_magnitude = direction.length()
 	var move_direction = direction.normalized() if input_magnitude > 0.05 else Vector3.ZERO
+	
 	if input_magnitude > 0.05:
 		var target_angle = atan2(-move_direction.x, -move_direction.z)
 		var angle_diff = abs(rad_to_deg(wrapf(target_angle - rotation.y, -PI, PI)))
@@ -449,13 +488,18 @@ func move_character(delta):
 	move_and_slide()
 
 func _check_fall_and_respawn():
-	if global_transform.origin.y < -50.0 or global_transform.origin.y > 400.0 or Input.is_action_just_pressed("respawn"):
+	if global_transform.origin.y < -50.0 or Input.is_action_just_pressed("respawn"):
+		if team == "hider":
+			var level = get_tree().get_root().get_node("Level")
+			if level and multiplayer.get_unique_id() != 1:
+				level.rpc_id(1, "tag_hider", "server", self.name)
 		_respawn()
-		
+
+
 func _respawn():
 	global_transform.origin = _respawn_point
 	velocity = Vector3.ZERO
-	
+
 @rpc("any_peer", "reliable")
 func change_nick(new_nick: String):
 	if nickname:

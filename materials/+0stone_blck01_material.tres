@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://xndfx001kjl6"]
+
+[ext_resource type="Texture2D" path="res://textures/+0stone_blck01.png" id="1_cay8t"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_cay8t")
+texture_filter = 0

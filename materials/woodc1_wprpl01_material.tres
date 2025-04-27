@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dniojenl2jgaf"]
+
+[ext_resource type="Texture2D" path="res://textures/woodc1_wprpl01.png" id="1_vcdx0"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_vcdx0")
+texture_filter = 0

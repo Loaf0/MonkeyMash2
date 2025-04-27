@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://djuigseoqr6rk"]
+
+[ext_resource type="Script" uid="uid://c0kpgtcwfgi24" path="res://scripts/player/camera_pivot.gd" id="1_81tar"]
+
+[node name="Camera" type="Node3D"]
+script = ExtResource("1_81tar")
+collision_offset = null
+collision_smooth_speed = null
+camera_dist = null
+camera_height = null
+max_camera_dist = null
+min_camera_dist = null
+speed_zoom_mod = null
+rotation_speed = null
+move_smooth = null
+vertical_limit = null
+right_stick_influence = null
+follow_behind_strength = null
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="RayCast3D"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.81, 3)
+doppler_tracking = 2
+
+[node name="InputCheck" type="Timer" parent="."]
+wait_time = 0.2
+
+[connection signal="timeout" from="InputCheck" to="." method="_on_input_check_timeout"]

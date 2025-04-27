@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://tclpa68jc8sj"]
+
+[ext_resource type="Texture2D" path="res://textures/bek_blck1_w05_3.png" id="1_a1uhk"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_a1uhk")
+texture_filter = 0

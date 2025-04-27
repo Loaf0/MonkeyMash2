@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://y878xfu3mkco"]
+
+[ext_resource type="Texture2D" path="res://textures/metal_rust_07.png" id="1_gp8cr"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_gp8cr")
+texture_filter = 0

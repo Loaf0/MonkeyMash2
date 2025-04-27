@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dwl0lh50roivr"]
+
+[ext_resource type="Texture2D" path="res://textures/metal_iron3_08.png" id="1_oswfy"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_oswfy")
+texture_filter = 0

@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cpgi4s7p2cd3g"]
+
+[ext_resource type="Texture2D" path="res://textures/mrbl_t13_4.png" id="1_re677"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_re677")
+texture_filter = 0

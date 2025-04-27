@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://vjwpoejgoenx"]
+
+[ext_resource type="Texture2D" uid="uid://3jdvso0e2ud4" path="res://textures/woodc1_fbare01.png" id="1_5fban"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_5fban")
+uv1_scale = Vector3(0.1, 0.1, 0.1)
+uv1_triplanar = true
+texture_filter = 0

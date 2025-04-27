@@ -1,26 +1,34 @@
 extends CharacterBody3D
-
-@onready var bonk_cast = $BonkCast
+class_name Character
 
 enum State {
-	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, BONK
+	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, 
+	WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, 
+	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1
 }
 
+@onready var seeker_spawn = $".".seeker_spawn
+@onready var hider_spawn = $".".hider_spawn
+
 @export_category("General")
-@export var gravity := -15.0
+@export var gravity := -12.0
 
 @export_category("Jumping")
-@export var jump_force := 10.0
-@export var jump_extra_force := 5.0
+@export var jump_force := 7.0
+@export var jump_extra_force := 3.0
 @export var jump_hold_time := 0.2
 @export var apex_gravity = 0.8
-@export var fall_multiplier := 2.0
+@export var fall_multiplier := 1.8
 @export var low_jump_multiplier := 2.8
 @export var max_fall_speed := -20.0
 @export var coyote_time_max := 0.15
+@export var long_jump_forward_speed = 14.0
+@export var long_jump_upward_speed = 10.0
 
 @export_category("Movement")
 @export var move_speed := 7.0
+@export var run_speed = 9.0
+@export var walk_speed = 7.0
 @export var acceleration := 15.0
 @export var momentum_acceleration := 3.0
 @export var momentum_deceleration := 30.0
@@ -33,6 +41,8 @@ var air_influence := standard_air_influence
 @export var max_snap_angle := 45.0
 @export var turn_slowdown_threshold := 110.0
 @export var turn_slowdown_multiplier := 0.9
+var slide_speed = 10.0
+var slide_accel = 20.0
 
 @export_category("Ground Pound")
 @export var ground_pound_speed := -16.0
@@ -42,9 +52,8 @@ var ground_pound_timer := 0.0
 var ground_pound_started := false
 
 @export_category("Dive")
-@export var dive_speed := 20.0
-@export var dive_horizontal_speed := 10.0
-@export var dive_upward_boost := 8.0
+@export var dive_horizontal_speed := 6.0
+@export var dive_upward_boost := 6.0
 @export var dive_air_modifier := 0.1
 @export var max_dive_duration := 2.5
 @export var dive_turn_speed := 2.0
@@ -56,6 +65,7 @@ var dive_air_influence = standard_air_influence * dive_air_modifier
 var bonk_timer := 0.0
 var stunned_timer := 0.0
 var just_bonked = true
+var just_long_jumped = true
 
 @export_category("Ground Pound Recovery")
 @export var ground_pound_recovery_time := 0.25
@@ -65,12 +75,14 @@ var recovery_timer := 0.0
 @export_category("Wall Interactions")
 @export var wall_slide_min_speed := -1.0
 @export var wall_slide_max_speed := -6.0
-@export var wall_jump_force := Vector3(-10, 12, 0)
+@export var wall_jump_force := Vector3(-8.0, 10, 0)
 @export var wall_slide_lerp_duration := 3.0
 @export var wall_jump_input_lock_duration := 0.15
 var wall_jump_lock_timer := 0.0
 var wall_slide_timer := 0.0
 
+var walk_time: float = 0.0
+const TIME_TO_RUN: float = 1.5
 
 @export_category("Buffers")
 @export var jump_buffer_time := 0.15
@@ -91,49 +103,69 @@ var current_speed := 0.0
 var jump_hold_timer := 0.0
 var jump_held := false
 var just_dived = false
+@onready var bonk_cast = $BonkCast
 
-var current_state: State = State.FALL
+@export var current_state: State = State.FALL
 
-func _spawn_camera():
-	var camera_instance = preload("res://scenes/player/camera.tscn").instantiate()
-	get_parent().add_child(camera_instance)
-	camera = camera_instance
-	camera.set_player(self)
-	camera.camera.make_current()
+@export var team : String 
+@onready var tag_box = $TagBox
 
-	set_process_input(true)
-	set_physics_process(true)
+@onready var nickname: Label3D = $PlayerNick/Nickname
+
+@export_category("Objects")
+@export var _body: Node3D = null
+
+@export_category("Skin Colors")
+@export var blue_texture : CompressedTexture2D
+@export var yellow_texture : CompressedTexture2D
+@export var green_texture : CompressedTexture2D
+@export var red_texture : CompressedTexture2D
+
+var _respawn_point = Vector3(0, 5, 0)
 
 func _enter_tree():
-	set_multiplayer_authority(name.to_int())
-
-func _ready() -> void:
+	set_multiplayer_authority(str(name).to_int())
 	if is_multiplayer_authority():
-		_spawn_camera()
+		camera = $"../Camera"
+		camera.camera.current = true
+		camera.set_player(self)
+	else:
+		$Control.hide()
+	
+func _ready():
+	floor_snap_length = 1.0
+	
+	if multiplayer.is_server():
+		pass
 
 func _physics_process(delta):
-	if is_multiplayer_authority():
-		update_debug_menu()
-		handle_input()
-		update_timers(delta)
-		update_state(delta)
-		apply_gravity(delta)
-		move_character(delta)
+	$PlayerNick/Team.text = team if team != "hider" else ""
 
-
-func handle_input():
-	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")
-	var cam_basis = camera.global_transform.basis
-	var cam_forward = -cam_basis.z
-	var cam_right = cam_basis.x
-
-	direction = (cam_forward * input_dir.y + cam_right * input_dir.x).normalized()
-
-	if Input.is_action_just_pressed("spin"):
-		dive_buffer_timer = dive_buffer_time
-	if Input.is_action_just_pressed("jump"):
-		jump_buffer_timer = jump_buffer_time
-		wall_jump_buffer_timer = wall_jump_buffer_time 
+	if !is_multiplayer_authority():
+		nickname.visible = (Global.local_player_team == team)
+		_body.animate(current_state)
+		return
+	
+	$PlayerNick/Team.text = team if team != "hider" else ""
+	Global.local_player_team = team
+	nickname.hide()
+	
+	var current_scene = get_tree().get_current_scene()
+	if current_scene and current_scene.has_method("is_chat_visible") and current_scene.is_chat_visible() and is_on_floor():
+		freeze()
+		_body.animate(current_state)
+		return
+	
+	update_debug_menu()
+	handle_input()
+	apply_gravity(delta)
+	update_timers(delta)
+	update_state(delta)
+	move_character(delta)
+	move_and_slide()
+	
+	_body.animate(current_state)
+	_check_fall_and_respawn()
 
 func update_timers(delta):
 	# Wall jump coyote time
@@ -166,41 +198,46 @@ func update_timers(delta):
 	if Input.is_action_just_released("jump"):
 		jump_held = false
 
-func jump():
-	velocity.y = jump_force
-	current_state = State.JUMP
-	jump_hold_timer = jump_hold_time
-	jump_held = true
-	jump_buffer_timer = 0.0
-
-func apply_gravity(delta):
-	var is_rising = velocity.y > 0
-	var is_falling = velocity.y < 0
-	var at_apex = abs(velocity.y) < 2.0
-
-	if is_falling:
-		velocity.y += gravity * fall_multiplier * delta
-	elif !jump_held and is_rising:
-		velocity.y += gravity * low_jump_multiplier * delta
-	elif at_apex:
-		velocity.y += gravity * apex_gravity * delta
-	else:
-		velocity.y += gravity * delta
-	
-	velocity.y = max(velocity.y, max_fall_speed)
-
 func update_state(delta):
 	match current_state:
-		State.IDLE, State.WALK, State.RUN:
+		State.IDLE, State.WALK:
 			if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 				jump()
 			elif !is_on_floor():
 				current_state = State.FALL
 			elif direction.length() > 0.1:
-				current_state = State.WALK
+				walk_time += delta
+				if walk_time >= TIME_TO_RUN:
+					current_state = State.RUN
+				else:
+					current_state = State.WALK
 			else:
 				current_state = State.IDLE
+				walk_time = 0.0
 
+			if Input.is_action_just_pressed("Emote1"):
+				current_state = State.EMOTE1
+
+			if Input.is_action_pressed("ground_pound"):
+				current_state = State.CROUCH
+		
+		State.RUN:
+			if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
+				jump()
+			elif !is_on_floor():
+				current_state = State.FALL
+			elif direction.length() > 0.1:
+				current_state = State.RUN
+			else:
+				current_state = State.IDLE
+				walk_time = 0.0
+
+			if Input.is_action_just_pressed("Emote1"):
+				current_state = State.EMOTE1
+
+			if Input.is_action_pressed("ground_pound"):
+				current_state = State.CROUCH
+	
 		State.JUMP:
 			if velocity.y < 0:
 				current_state = State.FALL
@@ -211,7 +248,7 @@ func update_state(delta):
 
 		State.FALL:
 			if is_on_floor():
-				current_state = State.LAND
+				current_state = State.LAND if !Input.is_action_pressed("ground_pound") else State.CROUCH
 			elif Input.is_action_just_pressed("ground_pound"):
 				current_state = State.GROUND_POUND
 				ground_pound_started = false
@@ -288,6 +325,8 @@ func update_state(delta):
 				var slide_speed = lerp(wall_slide_min_speed, wall_slide_max_speed, t)
 				if velocity.y < slide_speed:
 					velocity.y = slide_speed
+				velocity = Vector3(velocity.x * .9, velocity.y, velocity.z * .9)
+
 
 		State.WALL_JUMP:
 			if Input.is_action_just_pressed("ground_pound"):
@@ -308,10 +347,16 @@ func update_state(delta):
 			if just_bonked:
 				stunned_timer = bonk_stun_time
 				bonk_timer = 0.0
+
 				var wall_normal = get_wall_normal()
-				if wall_normal != Vector3.ZERO:
-					velocity = wall_normal * 6.0
-					velocity.y = 3.5
+				if wall_normal == Vector3.ZERO:
+					var horizontal_vel = Vector3(velocity.x, 0, velocity.z)
+					if horizontal_vel.length() > 0:
+						wall_normal = -horizontal_vel.normalized()
+					else:
+						wall_normal = -transform.basis.z
+				velocity = wall_normal * 3.0
+				velocity.y = 1.5
 			just_bonked = false
 			if is_on_floor():
 				stunned_timer -= delta
@@ -320,15 +365,115 @@ func update_state(delta):
 				if stunned_timer <= 0.0:
 					just_bonked = true
 					current_state = State.LAND
+		State.EMOTE1:
+			if $"3DGodotRobot/AnimationPlayer".is_playing() and $"3DGodotRobot/AnimationPlayer".current_animation == "Emote1":
+				return
+			current_state = State.IDLE
+		
+		State.CROUCH:
+			if !is_on_floor():
+				current_state = State.FALL
+				return
+
+			if !Input.is_action_pressed("ground_pound"):
+				current_state = State.IDLE
+				return
+
+			if Input.is_action_just_pressed("jump"): 
+				if velocity.length() > 1.0:
+					just_long_jumped = true
+					current_state = State.LONG_JUMP
+				else:
+					velocity.y = jump_force * ground_pound_jump_multiplier
+					current_state = State.JUMP
+					jump_hold_timer = jump_hold_time
+					jump_held = true
+		
+		State.LONG_JUMP:
+			if just_long_jumped:
+				var forward = -transform.basis.z.normalized()
+				velocity = forward * long_jump_forward_speed
+				velocity.y = long_jump_upward_speed
+			just_long_jumped = false
+			if(velocity.y < 0):
+				current_state = State.FALL
+
+func freeze():
+	pass
+
+func handle_input():
+	if camera == null:
+		return
+	
+	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")
+
+	var cam_basis = camera.global_transform.basis
+
+	var cam_forward = -cam_basis.z
+	cam_forward.y = 0
+	cam_forward = cam_forward.normalized()
+
+	var cam_right = cam_basis.x
+	cam_right.y = 0
+	cam_right = cam_right.normalized()
+
+	direction = (cam_forward * input_dir.y + cam_right * input_dir.x).normalized()
+
+	if Input.is_action_just_pressed("spin"):
+		dive_buffer_timer = dive_buffer_time
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer_timer = jump_buffer_time
+		wall_jump_buffer_timer = wall_jump_buffer_time 
+
+func apply_gravity(delta):
+	var is_rising = velocity.y > 0
+	var is_falling = velocity.y < 0
+	var at_apex = abs(velocity.y) < 2.0
+
+	if is_falling:
+		velocity.y += gravity * fall_multiplier * delta
+	elif !jump_held and is_rising:
+		velocity.y += gravity * low_jump_multiplier * delta
+	elif at_apex:
+		velocity.y += gravity * apex_gravity * delta
+	else:
+		velocity.y += gravity * delta
+	
+	velocity.y = max(velocity.y, max_fall_speed)
 
 func move_character(delta):
+	
+	var tilt_strength = 8.0
+	var tilt_return_strength = 15.0
+	var forward_dir = -transform.basis.z.normalized()
+	var right_dir
+	var up_dir
+
+	if is_on_floor():
+		var floor_normal = get_floor_normal().normalized()
+		right_dir = forward_dir.cross(floor_normal).normalized()
+		up_dir = floor_normal
+	else:
+		# Smoothly lerp the up direction back to Vector3.UP when airborne
+		up_dir = transform.basis.y.lerp(Vector3.UP, delta * tilt_return_strength).normalized()
+		right_dir = forward_dir.cross(up_dir).normalized()
+		forward_dir = up_dir.cross(right_dir).normalized()
+
+	var target_basis = Basis(right_dir, up_dir, -forward_dir)
+	transform.basis = transform.basis.slerp(target_basis.orthonormalized(), delta * tilt_strength)
+
+	
+	var target_speed = run_speed if current_state == State.RUN else walk_speed
+
+	move_speed = lerp(move_speed, target_speed, delta * 5.0)
+	
 	if current_state in [State.GROUND_POUND, State.GROUND_POUND_RECOVERY]:
 		velocity.x = 0
 		velocity.z = 0
 		move_and_slide()
 		return
 	
-	if current_state == State.BONK:
+	if current_state == State.BONK || current_state == State.CROUCH || current_state == State.EMOTE1:
 		direction = Vector3(0, 0, 0)
 		
 	if (current_state == State.DIVE):
@@ -354,6 +499,7 @@ func move_character(delta):
 		current_speed = lerp(current_speed, 0.0, momentum_deceleration * delta)
 	
 	var desired_velocity = move_direction * current_speed
+
 	
 	if is_on_floor():
 		velocity.x = lerp(velocity.x, desired_velocity.x, acceleration * delta)
@@ -368,11 +514,58 @@ func move_character(delta):
 	
 	move_and_slide()
 
-func perform_spin(delta):
+func _check_fall_and_respawn():
+	if global_transform.origin.y < -50.0 or Input.is_action_just_pressed("respawn"):
+		if team == "hider":
+			var level = get_tree().get_root().get_node("Level")
+			if level and multiplayer.get_unique_id() != 1:
+				level.rpc_id(1, "tag_hider", "server", self.name)
+		_respawn()
+
+
+func _respawn():
+	global_transform.origin = _respawn_point
+	velocity = Vector3.ZERO
+
+@rpc("any_peer", "reliable")
+func change_nick(new_nick: String):
+	if nickname:
+		nickname.text = new_nick
+		
+func get_texture_from_name(skin_name: String) -> CompressedTexture2D:
+	match skin_name:
+		"blue": return blue_texture
+		"green": return green_texture
+		"red": return red_texture
+		"yellow": return yellow_texture
+		_: return blue_texture
+		
+@rpc("any_peer", "reliable")
+func set_player_skin(skin_name: String) -> void:
+	var texture = get_texture_from_name(skin_name)
+	var bottom: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Bottom")
+	var chest: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Chest")
+	var face: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Face")
+	var limbs_head: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Llimbs and head")
+	
+	set_mesh_texture(bottom, texture)
+	set_mesh_texture(chest, texture)
+	set_mesh_texture(face, texture)
+	set_mesh_texture(limbs_head, texture)
+	
+func set_mesh_texture(mesh_instance: MeshInstance3D, texture: CompressedTexture2D) -> void:
+	if mesh_instance:
+		var material := mesh_instance.get_surface_override_material(0)
+		if material and material is StandardMaterial3D:
+			var new_material := material
+			new_material.albedo_texture = texture
+			mesh_instance.set_surface_override_material(0, new_material)
+
+func perform_spin(_delta):
 	#float/jump/attack thing
 	pass
 
-func perform_dive(delta):
+func perform_dive(_delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_back", "move_forward")
 	var flat_forward = Vector3.FORWARD.rotated(Vector3.UP, camera.global_transform.basis.get_euler().y)
 	var flat_right = Vector3.RIGHT.rotated(Vector3.UP, camera.global_transform.basis.get_euler().y)
@@ -392,10 +585,8 @@ func perform_dive(delta):
 		rotation.y = target_angle
 
 func update_debug_menu():
-	if position.y < -30:
-		position = Vector3(position.x, 100, position.z)
-	
 	$Control/Label.text = " Position : " + str(round_vector3(position)) + "\n Velocity : " + str(round_vector3(velocity)) + "\n State : " + str(State.keys()[current_state])
+	$Control/Label.text += "\n Team : " + team
 
 func round_vector3(vec: Vector3) -> Vector3:
 	return Vector3(round(vec.x * 10.0) / 10.0, round(vec.y * 10.0) / 10.0, round(vec.z * 10.0) / 10.0)
@@ -422,3 +613,22 @@ func perform_wall_jump():
 	wall_jump_buffer_timer = 0.0
 	wall_jump_lock_timer = wall_jump_input_lock_duration
 	current_state = State.WALL_JUMP
+
+func jump():
+	velocity.y = jump_force
+	current_state = State.JUMP
+	jump_hold_timer = jump_hold_time
+	jump_held = true
+	jump_buffer_timer = 0.0
+
+func _on_tag_box_body_entered(body: Node3D) -> void:
+	if not body.is_in_group("player") or team == "hider":
+		return
+
+	if body.team == "hider":
+		var level = get_tree().get_root().get_node("Level")
+		if level and multiplayer.get_unique_id() != 1:
+			level.rpc_id(1, "tag_hider", self.name, body.name)
+
+func set_team(team_name: String):
+	team = team_name

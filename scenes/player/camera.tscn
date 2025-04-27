@@ -4,9 +4,14 @@
 
 [node name="Camera" type="Node3D"]
 script = ExtResource("1_81tar")
+collision_offset = 0.01
+wall_hit_reaction_distance = 5.0
 
-[node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.81, 3)
+[node name="RayCast3D" type="RayCast3D" parent="."]
+target_position = Vector3(0, 1, 3)
+
+[node name="Camera" type="Camera3D" parent="RayCast3D"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0, 0)
 doppler_tracking = 2
 
 [node name="InputCheck" type="Timer" parent="."]

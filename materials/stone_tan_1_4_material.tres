@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bi132n1eim7jy"]
+
+[ext_resource type="Texture2D" path="res://textures/stone_tan_1_4.png" id="1_mvx50"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_mvx50")
+texture_filter = 0

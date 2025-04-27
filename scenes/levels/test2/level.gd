@@ -1,12 +1,12 @@
 extends Node3D
 
-@onready var skin_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option2/SkinInput
+@onready var skin_input: OptionButton = $Menu/MainContainer/MainMenu/VBoxContainer/Option2/OptionButton
 @onready var nick_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option1/NickInput
 @onready var address_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option3/AddressInput
 @onready var port_input : LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option4/PortInput
 
-@onready var seeker_spawn = $SeekerSpawn
-@onready var hider_spawn = $HiderSpawn
+@onready var seeker_spawn = $Environment/Map/SeekerSpawn
+@onready var hider_spawn = $Environment/Map/HiderSpawn
 
 @onready var players_container: Node3D = $PlayersContainer
 @onready var menu: Control = $Menu
@@ -46,7 +46,8 @@ func _on_host_pressed():
 
 func _on_join_pressed():
 	menu.hide()
-	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges().to_lower(), address_input.text.strip_edges(), int(port_input.text))
+	var selected_color = skin_input.get_item_text(skin_input.selected).strip_edges().to_lower()
+	Network.join_game(nick_input.text.strip_edges(), selected_color, address_input.text.strip_edges(), int(port_input.text))
 
 func _add_player(id: int, player_info : Dictionary):
 	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:
@@ -132,8 +133,10 @@ func is_chat_visible() -> bool:
 func _input(event):
 	if event.is_action_pressed("toggle_chat"):
 		toggle_chat()
+		get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.keycode == KEY_ENTER:
-		_on_send_pressed()
+		if chat_visible and message.has_focus():
+			_on_send_pressed()
 
 func _on_send_pressed() -> void:
 	var trimmed_message = message.text.strip_edges()

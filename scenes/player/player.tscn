@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=4 uid="uid://cffjduipbb3s5"]
+[gd_scene load_steps=50 format=4 uid="uid://cffjduipbb3s5"]
 
 [ext_resource type="Script" uid="uid://b1k0mt31lc71h" path="res://scripts/player/player.gd" id="1_tdh26"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://assets/3d/Models/player/3DGodotRobot_GodotPalette.png" id="1_w11jc"]
@@ -124,8 +124,9 @@ bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_53giy"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ln88"]
 resource_local_to_scene = true
+albedo_texture = ExtResource("4_max2b")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_fun53"]
 resource_local_to_scene = true
@@ -226,9 +227,6 @@ bind/23/pose = Transform3D(1.72851, -2.29899e-06, -1.33733e-06, -0.000247434, -0
 bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kw1ok"]
-resource_local_to_scene = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s08cx"]
 resource_name = "Material.002"
@@ -351,9 +349,6 @@ bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_krq4h"]
-resource_local_to_scene = true
-
 [sub_resource type="ArrayMesh" id="ArrayMesh_0hcp6"]
 resource_local_to_scene = true
 resource_name = "3DGodotRobot_Cube"
@@ -453,9 +448,6 @@ bind/23/pose = Transform3D(1.72851, -2.29899e-06, -1.33733e-06, -0.000247434, -0
 bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ln88"]
-resource_local_to_scene = true
 
 [sub_resource type="Animation" id="Animation_jou0i"]
 resource_name = "Attack1"
@@ -4796,8 +4788,8 @@ radius = 1.0
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body") groups=["player"]]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
-collision_layer = 15
-collision_mask = 15
+collision_layer = 2
+collision_mask = 9
 platform_on_leave = 1
 script = ExtResource("1_tdh26")
 _body = NodePath("3DGodotRobot")
@@ -5003,17 +4995,17 @@ bones/24/scale = Vector3(1, 1, 1)
 [node name="Bottom" type="MeshInstance3D" parent="3DGodotRobot/RobotArmature/Skeleton3D"]
 mesh = SubResource("ArrayMesh_qcia5")
 skin = SubResource("Skin_llc6q")
-surface_material_override/0 = SubResource("StandardMaterial3D_53giy")
+surface_material_override/0 = SubResource("StandardMaterial3D_1ln88")
 
 [node name="Chest" type="MeshInstance3D" parent="3DGodotRobot/RobotArmature/Skeleton3D"]
 mesh = SubResource("ArrayMesh_fun53")
 skin = SubResource("Skin_hu16g")
-surface_material_override/0 = SubResource("StandardMaterial3D_kw1ok")
+surface_material_override/0 = SubResource("StandardMaterial3D_1ln88")
 
 [node name="Face" type="MeshInstance3D" parent="3DGodotRobot/RobotArmature/Skeleton3D"]
 mesh = SubResource("ArrayMesh_fus4a")
 skin = SubResource("Skin_5h6fu")
-surface_material_override/0 = SubResource("StandardMaterial3D_krq4h")
+surface_material_override/0 = SubResource("StandardMaterial3D_1ln88")
 
 [node name="Llimbs and head" type="MeshInstance3D" parent="3DGodotRobot/RobotArmature/Skeleton3D"]
 mesh = SubResource("ArrayMesh_0hcp6")
@@ -5043,13 +5035,10 @@ text = "player name test"
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_wb3a5")
 
-[node name="StepCast" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.51)
-target_position = Vector3(0, -0.6, 0)
-
 [node name="BonkCast" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.306701, 0)
 target_position = Vector3(0, 0, -0.6)
+collision_mask = 9
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -5070,8 +5059,9 @@ label_settings = SubResource("LabelSettings_n2ifj")
 
 [node name="TagBox" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-collision_layer = 7
-collision_mask = 7
+visible = false
+collision_layer = 2
+collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TagBox"]
 shape = SubResource("SphereShape3D_n2ifj")

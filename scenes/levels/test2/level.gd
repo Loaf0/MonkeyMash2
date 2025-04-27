@@ -46,8 +46,8 @@ func _on_host_pressed():
 
 func _on_join_pressed():
 	menu.hide()
-	var selected_color = skin_input.get_item_text(skin_input.selected).strip_edges().to_lower()
-	Network.join_game(nick_input.text.strip_edges(), selected_color, address_input.text.strip_edges(), int(port_input.text))
+	var skin_color = skin_input.get_item_text(skin_input.selected).strip_edges().to_lower()
+	Network.join_game(nick_input.text.strip_edges(), skin_color, address_input.text.strip_edges(), int(port_input.text))
 
 func _add_player(id: int, player_info : Dictionary):
 	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:

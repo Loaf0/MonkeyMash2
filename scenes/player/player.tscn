@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=4 uid="uid://cffjduipbb3s5"]
+[gd_scene load_steps=53 format=4 uid="uid://cffjduipbb3s5"]
 
 [ext_resource type="Script" uid="uid://b1k0mt31lc71h" path="res://scripts/player/player.gd" id="1_tdh26"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://assets/3d/Models/player/3DGodotRobot_GodotPalette.png" id="1_w11jc"]
@@ -7,6 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://bbid6mowxhd5b" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotGreenPalette.png" id="4_74ree"]
 [ext_resource type="Texture2D" uid="uid://fpmmv2oxjcdv" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotPalette.png" id="4_max2b"]
 [ext_resource type="Texture2D" uid="uid://brp1gy30s4rks" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotRedPalette.png" id="5_qlefn"]
+[ext_resource type="Texture2D" uid="uid://d37usqc4npbgq" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotIndigoPalette.png" id="6_gx1jg"]
+[ext_resource type="Texture2D" uid="uid://bsiphosmjwp0d" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotForestPalette.png" id="7_ugbui"]
+[ext_resource type="Texture2D" uid="uid://lsrq5ye27uqc" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotMidnightPalette.png" id="8_fcs02"]
+[ext_resource type="Texture2D" uid="uid://bdbemaivad4et" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotNoirPalette.png" id="9_myrg7"]
+[ext_resource type="Texture2D" uid="uid://8b7qhjqpssrt" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotOurplePalette.png" id="10_kvlxm"]
+[ext_resource type="Texture2D" uid="uid://c2gfut1ramqom" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotCornPalette.png" id="11_uf5tr"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mx45w"]
 radius = 0.309272
@@ -4799,6 +4805,12 @@ blue_texture = ExtResource("4_max2b")
 yellow_texture = ExtResource("3_l3dv8")
 green_texture = ExtResource("4_74ree")
 red_texture = ExtResource("5_qlefn")
+indigo_texture = ExtResource("6_gx1jg")
+forest_texture = ExtResource("7_ugbui")
+midnight_texture = ExtResource("8_fcs02")
+noir_texture = ExtResource("9_myrg7")
+ourple_texture = ExtResource("10_kvlxm")
+corn_texture = ExtResource("11_uf5tr")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.784147, 0)

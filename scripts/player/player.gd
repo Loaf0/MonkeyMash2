@@ -120,6 +120,14 @@ var just_dived = false
 @export var yellow_texture : CompressedTexture2D
 @export var green_texture : CompressedTexture2D
 @export var red_texture : CompressedTexture2D
+@export var indigo_texture : CompressedTexture2D
+@export var forest_texture : CompressedTexture2D
+@export var midnight_texture : CompressedTexture2D
+@export var noir_texture : CompressedTexture2D
+@export var ourple_texture : CompressedTexture2D
+@export var corn_texture : CompressedTexture2D
+
+
 
 var _respawn_point = Vector3(0, 5, 0)
 
@@ -538,6 +546,12 @@ func get_texture_from_name(skin_name: String) -> CompressedTexture2D:
 		"green": return green_texture
 		"red": return red_texture
 		"yellow": return yellow_texture
+		"corn": return corn_texture
+		"noir": return noir_texture
+		"forest": return forest_texture
+		"ourple": return ourple_texture
+		"indigo": return indigo_texture
+		"midnight": return midnight_texture
 		_: return blue_texture
 		
 @rpc("any_peer", "reliable")

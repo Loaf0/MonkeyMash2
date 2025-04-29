@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://buj120y4pvy7n"]
+
+[ext_resource type="Texture2D" uid="uid://chmu8sscjdgqw" path="res://assets/2d/textures/quaketexture/textures/metal_slvr_08.png" id="1_pf2tm"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_pf2tm")
+texture_filter = 0

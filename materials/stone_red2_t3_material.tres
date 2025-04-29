@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bv8p7nst4gkbj"]
-
-[ext_resource type="Texture2D" path="res://textures/stone_red2_t3.png" id="1_ks0tm"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_ks0tm")
-texture_filter = 0

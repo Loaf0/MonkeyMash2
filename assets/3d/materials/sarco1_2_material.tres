@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bryyg13dcqwwk"]
+
+[ext_resource type="Texture2D" uid="uid://7yjqxhlxgbcm" path="res://assets/2d/textures/quaketexture/textures/sarco1_2.png" id="1_57fk4"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_57fk4")
+texture_filter = 0

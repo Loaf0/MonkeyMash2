@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://broim2sdg7gyf"]
-
-[ext_resource type="Texture2D" path="res://textures/64_honey_2.png" id="1_xv3vg"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_xv3vg")
-texture_filter = 0

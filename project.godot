@@ -24,6 +24,12 @@ MouseLock="*res://scripts/player/mouse_lock.gd"
 Network="*res://scripts/global/Network.gd"
 Global="*res://scripts/global/Global.gd"
 
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/aspect="keep_width"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/bsp_importer/plugin.cfg")

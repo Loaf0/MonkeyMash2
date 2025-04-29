@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bedioslvl2t1a"]
+
+[ext_resource type="Texture2D" uid="uid://uohxhn2ivse6" path="res://assets/2d/textures/quaketexture/textures/stone_grey_17.png" id="1_frnam"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_frnam")
+texture_filter = 0

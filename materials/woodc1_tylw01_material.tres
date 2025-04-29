@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dbu7wk4obnxq8"]
-
-[ext_resource type="Texture2D" path="res://textures/woodc1_tylw01.png" id="1_yl488"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_yl488")
-texture_filter = 0

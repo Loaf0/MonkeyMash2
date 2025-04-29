@@ -12,17 +12,26 @@ extends Node3D
 @onready var menu: Control = $Menu
 @export var player_scene: PackedScene
 
+# UI elements
+
+# Hiders Left
+@onready var hiders_left: Label = $UI/HidersLeft
+
 # multiplayer chat
 @onready var message: LineEdit = $MultiplayerChat/VBoxContainer/HBoxContainer/Message
 @onready var send: Button = $MultiplayerChat/VBoxContainer/HBoxContainer/Send
 @onready var chat: TextEdit = $MultiplayerChat/VBoxContainer/Chat
 @onready var multiplayer_chat: Control = $MultiplayerChat
 var chat_visible = false
+var local_id
+
 
 func _ready():
 	multiplayer_chat.modulate.a = 0.3
 	menu.show()
 	multiplayer_chat.set_process_input(true)
+	local_id = multiplayer.get_unique_id()
+
 	if not multiplayer.is_server():
 		return
 		
@@ -46,7 +55,9 @@ func _on_host_pressed():
 
 func _on_join_pressed():
 	menu.hide()
-	var skin_color = skin_input.get_item_text(skin_input.selected).strip_edges().to_lower()
+	var skin_color = "blue"
+	if skin_input and skin_input.selected >= 0: 
+		skin_color = skin_input.get_item_text(skin_input.selected).strip_edges().to_lower()
 	Network.join_game(nick_input.text.strip_edges(), skin_color, address_input.text.strip_edges(), int(port_input.text))
 
 func _add_player(id: int, player_info : Dictionary):
@@ -65,6 +76,8 @@ func _add_player(id: int, player_info : Dictionary):
 	rpc("sync_player_skin", id, player_info["skin"])
 	rpc("sync_player_position", id, player.position)
 	rpc("sync_player_team", id, team)
+	
+	update_hiders_left()
 
 func get_spawn_point(team: String) -> Vector3:
 	if team == "seeker":
@@ -89,6 +102,8 @@ func sync_player_team(id: int, team_name: String):
 
 		if id == multiplayer.get_unique_id():
 			Global.local_player_team = team_name
+		
+	update_hiders_left()
 
 @rpc("any_peer", "call_local")
 func sync_player_name(id: int, nickname: String):
@@ -167,7 +182,15 @@ func _get_random_peer() -> int:
 
 @rpc("any_peer", "call_local")
 func msg_rpc(nick, msg):
-	chat.text += str(nick, " : ", msg, "\n")
+	var new_line = str(nick, " : ", msg)
+
+	var lines = chat.text.split("\n", false)
+	lines.append(new_line)
+
+	if lines.size() > 10:
+		lines.remove_at(0)
+
+	chat.text = "\n".join(lines)
 
 func _on_reset_game():
 	if multiplayer.get_unique_id() != 1:
@@ -189,6 +212,7 @@ func _on_reset_game():
 		if id != 1 and id != random_peer_id:
 			Network.players[id]["team"] = "hider"
 			rpc_id(id, "sync_player_team", id, "hider")
+	update_hiders_left()
 
 @rpc("any_peer", "call_local")
 func tag_hider(seeker_id: String, hider_id: String):
@@ -207,4 +231,22 @@ func tag_hider(seeker_id: String, hider_id: String):
 	hider.team = "seeker"
 	hider.position = get_spawn_point("seeker")
 	rpc("sync_player_team", int(hider_id), "seeker")
-	rpc("msg_rpc", "Server", "Player " + hider_id + " has been tagged and is now a Seeker!")
+	rpc("msg_rpc", "Server", "Player " + Network.players[int(hider_id)]["nick"] + " is now a Seeker!")
+	
+	update_hiders_left()
+
+func update_hiders_left():
+	var hiders = 0
+	var seekers = 0
+	for player in players_container.get_children():
+		if player.has_method("get_team"):
+			if player.get_team() == "hider":
+				hiders += 1
+			else:
+				seekers += 1
+	hiders_left.text = "Hiders : " + str(hiders) + "\nSeekers : " + str(seekers)
+
+
+func _on_update_hiders_left_timeout() -> void:
+	# update as backup if it ever gets desynced
+	update_hiders_left() 

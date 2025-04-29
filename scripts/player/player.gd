@@ -22,7 +22,7 @@ enum State {
 @export var low_jump_multiplier := 2.8
 @export var max_fall_speed := -20.0
 @export var coyote_time_max := 0.15
-@export var long_jump_forward_speed = 14.0
+@export var long_jump_forward_speed = 16.0
 @export var long_jump_upward_speed = 10.0
 
 @export_category("Movement")
@@ -331,7 +331,7 @@ func update_state(delta):
 			else:
 				wall_slide_timer += delta
 				var t = clamp(wall_slide_timer / wall_slide_lerp_duration, 0, 1)
-				var slide_speed = lerp(wall_slide_min_speed, wall_slide_max_speed, t)
+				slide_speed = lerp(wall_slide_min_speed, wall_slide_max_speed, t)
 				if velocity.y < slide_speed:
 					velocity.y = slide_speed
 				velocity = Vector3(velocity.x * .9, velocity.y, velocity.z * .9)
@@ -451,7 +451,6 @@ func apply_gravity(delta):
 	velocity.y = max(velocity.y, max_fall_speed)
 
 func move_character(delta):
-	
 	var tilt_strength = 8.0
 	var tilt_return_strength = 15.0
 	var forward_dir = -transform.basis.z.normalized()
@@ -460,10 +459,10 @@ func move_character(delta):
 
 	if is_on_floor():
 		var floor_normal = get_floor_normal().normalized()
-		right_dir = forward_dir.cross(floor_normal).normalized()
-		up_dir = floor_normal
+		var halfway_normal = Vector3.UP.slerp(floor_normal, 0.5).normalized()
+		right_dir = forward_dir.cross(halfway_normal).normalized()
+		up_dir = halfway_normal
 	else:
-		# Smoothly lerp the up direction back to Vector3.UP when airborne
 		up_dir = transform.basis.y.lerp(Vector3.UP, delta * tilt_return_strength).normalized()
 		right_dir = forward_dir.cross(up_dir).normalized()
 		forward_dir = up_dir.cross(right_dir).normalized()
@@ -471,7 +470,6 @@ func move_character(delta):
 	var target_basis = Basis(right_dir, up_dir, -forward_dir)
 	transform.basis = transform.basis.slerp(target_basis.orthonormalized(), delta * tilt_strength)
 
-	
 	var target_speed = run_speed if current_state == State.RUN else walk_speed
 
 	move_speed = lerp(move_speed, target_speed, delta * 5.0)
@@ -650,3 +648,6 @@ func _on_tag_box_body_entered(body: Node3D) -> void:
 
 func set_team(team_name: String):
 	team = team_name
+
+func get_team():
+	return team

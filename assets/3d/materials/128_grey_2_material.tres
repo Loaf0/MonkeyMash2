@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://b2bpiaygmb0vh"]
+
+[ext_resource type="Texture2D" uid="uid://b54pbd27wwciq" path="res://assets/2d/textures/quaketexture/textures/128_grey_2.png" id="1_w54na"]
+
+[resource]
+specular_mode = 2
+albedo_texture = ExtResource("1_w54na")
+texture_filter = 0

@@ -13,15 +13,17 @@ extends Node3D
 @export var player_scene: PackedScene
 
 # UI elements
+@onready var player_list = $"UI/Player List"
+@onready var player_list_label = $"UI/Player List/List"
 
 # Hiders Left
 @onready var hiders_left: Label = $UI/HidersLeft
 
 # multiplayer chat
-@onready var message: LineEdit = $MultiplayerChat/VBoxContainer/HBoxContainer/Message
-@onready var send: Button = $MultiplayerChat/VBoxContainer/HBoxContainer/Send
-@onready var chat: TextEdit = $MultiplayerChat/VBoxContainer/Chat
-@onready var multiplayer_chat: Control = $MultiplayerChat
+@onready var message: LineEdit = $UI/Chat/HBoxContainer/Message
+@onready var send: Button = $UI/Chat/HBoxContainer/Send
+@onready var chat: TextEdit = $UI/Chat/Chat
+@onready var multiplayer_chat = $UI/Chat
 var chat_visible = false
 var local_id
 
@@ -37,7 +39,13 @@ func _ready():
 		
 	Network.connect("player_connected", Callable(self, "_on_player_connected"))
 	multiplayer.peer_disconnected.connect(_remove_player)
-	
+
+func _process(_delta: float) -> void:
+	if Input.is_action_pressed("show_player_list"):
+		player_list.show()
+	else:
+		player_list.hide()
+
 func _on_player_connected(peer_id, player_info):
 	for id in Network.players.keys():
 		var player_data = Network.players[id]
@@ -47,11 +55,12 @@ func _on_player_connected(peer_id, player_info):
 			rpc_id(peer_id, "sync_player_team", id, player_data["team"])
 	_add_player(peer_id, player_info)
 
-
 func _on_host_pressed():
 	var port = int(port_input.text)
 	menu.hide()
 	Network.start_host(port)
+	$UI/HostCommands.show()
+	$PlayersContainer/Camera.queue_free()
 
 func _on_join_pressed():
 	menu.hide()
@@ -78,6 +87,7 @@ func _add_player(id: int, player_info : Dictionary):
 	rpc("sync_player_team", id, team)
 	
 	update_hiders_left()
+	update_player_list_label()
 
 func get_spawn_point(team: String) -> Vector3:
 	if team == "seeker":
@@ -104,6 +114,7 @@ func sync_player_team(id: int, team_name: String):
 			Global.local_player_team = team_name
 		
 	update_hiders_left()
+	update_player_list_label()
 
 @rpc("any_peer", "call_local")
 func sync_player_name(id: int, nickname: String):
@@ -159,10 +170,6 @@ func _on_send_pressed() -> void:
 		return # do not send empty messages
 
 	var nick = Network.players[multiplayer.get_unique_id()]["nick"]
-	
-	if trimmed_message == "/r" and multiplayer.get_unique_id() == 1:
-		_on_reset_game()
-		return
 
 	rpc("msg_rpc", nick, trimmed_message)
 	message.text = ""
@@ -213,6 +220,7 @@ func _on_reset_game():
 			Network.players[id]["team"] = "hider"
 			rpc_id(id, "sync_player_team", id, "hider")
 	update_hiders_left()
+	update_player_list_label()
 
 @rpc("any_peer", "call_local")
 func tag_hider(seeker_id: String, hider_id: String):
@@ -234,6 +242,7 @@ func tag_hider(seeker_id: String, hider_id: String):
 	rpc("msg_rpc", "Server", "Player " + Network.players[int(hider_id)]["nick"] + " is now a Seeker!")
 	
 	update_hiders_left()
+	update_player_list_label()
 
 func update_hiders_left():
 	var hiders = 0
@@ -246,7 +255,19 @@ func update_hiders_left():
 				seekers += 1
 	hiders_left.text = "Hiders : " + str(hiders) + "\nSeekers : " + str(seekers)
 
+func update_player_list_label():
+	var text = ""
+	for id in Network.players:
+		var player = Network.players[id]
+		if id != 1:
+			text += "  %s (%s) (%s)\n" % [player["nick"].strip_edges(), player["team"].capitalize(), player["skin"].capitalize()]
+	player_list_label.text = text
 
-func _on_update_hiders_left_timeout() -> void:
+func _on_recalculate_timeout() -> void:
 	# update as backup if it ever gets desynced
-	update_hiders_left() 
+	update_hiders_left()
+	update_player_list_label()
+
+func _on_restart_pressed() -> void:
+	if multiplayer.get_unique_id() == 1:
+		_on_reset_game()

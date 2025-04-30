@@ -1,7 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bcm2jbg48g5aj"]
+[gd_scene load_steps=6 format=3 uid="uid://bcm2jbg48g5aj"]
 
 [ext_resource type="Texture2D" uid="uid://chawqtd3fcydp" path="res://assets/2d/textures/test/texture_01.png" id="1_bbylb"]
-[ext_resource type="Texture2D" uid="uid://bkubbogydq1lw" path="res://scenes/levels/test/Skybox.png" id="2_bxr78"]
+[ext_resource type="PackedScene" uid="uid://4kh2e0uromah" path="res://scenes/levels/world_environment.tscn" id="1_nvy1u"]
 [ext_resource type="PackedScene" uid="uid://cw8826mu2qi75" path="res://scenes/Interactables/spring.tscn" id="3_nvy1u"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tc26a"]
@@ -17,17 +17,15 @@ uv1_scale = Vector3(0.25, 0.25, 0.25)
 uv1_triplanar = true
 grow_amount = 0.337
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nvy1u"]
-panorama = ExtResource("2_bxr78")
-
-[sub_resource type="Sky" id="Sky_smerw"]
-sky_material = SubResource("PanoramaSkyMaterial_nvy1u")
-
-[sub_resource type="Environment" id="Environment_yx20g"]
-background_mode = 2
-sky = SubResource("Sky_smerw")
-
 [node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.702724, 0.616144, 0.355731, -0.0993731, -0.410096, 0.906612, 0.704488, -0.672449, -0.226956, 0, 8.5706, 0)
+light_energy = 1.5
+shadow_enabled = true
+shadow_blur = 0.5
+
+[node name="WorldEnvironment" parent="." instance=ExtResource("1_nvy1u")]
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
@@ -511,9 +509,6 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 23.8233, 21, 0)
 
 [node name="SeekerSpawn" type="Node3D" parent="."]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 28.1771, 3.18031, 0)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_yx20g")
 
 [node name="Spring" parent="." instance=ExtResource("3_nvy1u")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.330301, 1.6, 4.60962)

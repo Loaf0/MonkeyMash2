@@ -53,7 +53,7 @@ var ground_pound_started := false
 
 @export_category("Dive")
 @export var dive_horizontal_speed := 6.0
-@export var dive_upward_boost := 8.0
+@export var dive_upward_boost := 7.0
 @export var dive_air_modifier := 0.1
 @export var max_dive_duration := 2.5
 @export var dive_turn_speed := 2.0

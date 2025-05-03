@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://brvgvbnjpsauu"]
-
-[ext_resource type="Texture2D" uid="uid://c7ditwt8bxsvp" path="res://assets/2d/textures/quaketexture/textures/wizwood1_6.png" id="1_uc14c"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_uc14c")
-texture_filter = 0

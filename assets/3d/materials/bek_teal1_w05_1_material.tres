@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dvckmeowdratm"]
-
-[ext_resource type="Texture2D" uid="uid://dhvn0abrwl7pq" path="res://assets/2d/textures/quaketexture/textures/bek_teal1_w05_1.png" id="1_kluti"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_kluti")
-texture_filter = 0

@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cyoqcqsv6qlem"]
-
-[ext_resource type="Texture2D" uid="uid://bsmuw684252n" path="res://assets/2d/textures/quaketexture/textures/metal_iron2_07.png" id="1_skhpi"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_skhpi")
-texture_filter = 0

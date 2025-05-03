@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://3k2bptxlm2hp"]
-
-[ext_resource type="Texture2D" uid="uid://cj3c75anrwvc8" path="res://assets/2d/textures/quaketexture/textures/metal_brass_01.png" id="1_udv1j"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_udv1j")
-texture_filter = 0

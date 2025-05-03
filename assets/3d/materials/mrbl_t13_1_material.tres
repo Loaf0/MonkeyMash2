@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dyskarpgk0433"]
-
-[ext_resource type="Texture2D" uid="uid://bv8w211655kl0" path="res://assets/2d/textures/quaketexture/textures/mrbl_t13_1.png" id="1_1vxv4"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_1vxv4")
-texture_filter = 0

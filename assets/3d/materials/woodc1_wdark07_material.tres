@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bjn4ngafcv66p"]
-
-[ext_resource type="Texture2D" uid="uid://b65emkpoiwduj" path="res://assets/2d/textures/quaketexture/textures/woodc1_wdark07.png" id="1_cgo6o"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_cgo6o")
-texture_filter = 0

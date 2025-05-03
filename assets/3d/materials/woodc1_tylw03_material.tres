@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c7d5tguwg2gmg"]
-
-[ext_resource type="Texture2D" uid="uid://d0jg271vn8yxt" path="res://assets/2d/textures/quaketexture/textures/woodc1_tylw03.png" id="1_hryca"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_hryca")
-texture_filter = 0

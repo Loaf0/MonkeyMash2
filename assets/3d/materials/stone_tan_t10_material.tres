@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://de7d0x7qtueqp"]
-
-[ext_resource type="Texture2D" uid="uid://c4ddk4wa1awj" path="res://assets/2d/textures/quaketexture/textures/stone_tan_t10.png" id="1_2xfip"]
-
-[resource]
-specular_mode = 2
-albedo_texture = ExtResource("1_2xfip")
-texture_filter = 0

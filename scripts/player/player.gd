@@ -264,7 +264,7 @@ func update_state(delta):
 				velocity.y = ground_pound_speed
 			elif jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 				jump()
-			elif is_touching_wall() and is_moving_into_wall():
+			elif is_touching_wall() and is_moving_into_wall() and bonk_cast.is_colliding():
 				current_state = State.WALL_SLIDE
 				wall_slide_timer = 0.0
 
@@ -522,15 +522,15 @@ func move_character(delta):
 	move_and_slide()
 
 func _check_fall_and_respawn():
-	if global_transform.origin.y < -50.0 or Input.is_action_just_pressed("respawn"):
-		if team == "hider":
-			var level = get_tree().get_root().get_node("Level")
-			if level and multiplayer.get_unique_id() != 1:
-				level.rpc_id(1, "tag_hider", "server", self.name)
+	if global_transform.origin.y < -500.0 or Input.is_action_just_pressed("respawn"):
 		_respawn()
 
 
 func _respawn():
+	if team == "hider":
+		var level = get_tree().get_root().get_node("Level")
+		if level and multiplayer.get_unique_id() != 1:
+			level.rpc_id(1, "tag_hider", "server", self.name)
 	global_transform.origin = _respawn_point
 	velocity = Vector3.ZERO
 

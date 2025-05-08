@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=4 uid="uid://cffjduipbb3s5"]
+[gd_scene load_steps=53 format=4 uid="uid://cffjduipbb3s5"]
 
 [ext_resource type="Script" uid="uid://b1k0mt31lc71h" path="res://scripts/player/player.gd" id="1_tdh26"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://assets/3d/Models/player/3DGodotRobot_GodotPalette.png" id="1_w11jc"]
@@ -13,6 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://bdbemaivad4et" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotNoirPalette.png" id="9_myrg7"]
 [ext_resource type="Texture2D" uid="uid://8b7qhjqpssrt" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotOurplePalette.png" id="10_kvlxm"]
 [ext_resource type="Texture2D" uid="uid://c2gfut1ramqom" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotCornPalette.png" id="11_uf5tr"]
+[ext_resource type="Texture2D" uid="uid://dllvhx80jhn3a" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotRustPalette.png" id="12_myrg7"]
+[ext_resource type="Texture2D" uid="uid://b17mr6rpieusg" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotPinkPalette.png" id="13_kvlxm"]
+[ext_resource type="Texture2D" uid="uid://cgfoy48d083di" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotOrangePalette.png" id="14_uf5tr"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mx45w"]
 radius = 0.309272
@@ -4803,6 +4806,9 @@ midnight_texture = ExtResource("8_fcs02")
 noir_texture = ExtResource("9_myrg7")
 ourple_texture = ExtResource("10_kvlxm")
 corn_texture = ExtResource("11_uf5tr")
+rust_texture = ExtResource("12_myrg7")
+pink_texture = ExtResource("13_kvlxm")
+orange_texture = ExtResource("14_uf5tr")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.784147, 0)
@@ -5038,7 +5044,6 @@ replication_config = SubResource("SceneReplicationConfig_wb3a5")
 [node name="BonkCast" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.306701, 0)
 target_position = Vector3(0, 0, -0.6)
-collision_mask = 9
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3

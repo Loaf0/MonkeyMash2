@@ -1,15 +1,15 @@
 extends Node3D
 
-@onready var skin_input: OptionButton = $Menu/MainContainer/MainMenu/VBoxContainer/Option2/OptionButton
-@onready var nick_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option1/NickInput
-@onready var address_input: LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option3/AddressInput
-@onready var port_input : LineEdit = $Menu/MainContainer/MainMenu/VBoxContainer/Option4/PortInput
+@onready var skin_input: OptionButton = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option2/OptionButton
+@onready var nick_input: LineEdit = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option1/NickInput
+@onready var address_input: LineEdit = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option3/AddressInput
+@onready var port_input : LineEdit = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option4/PortInput
 
 @onready var seeker_spawn = $Environment/Map/SeekerSpawn
 @onready var hider_spawn = $Environment/Map/HiderSpawn
 
 @onready var players_container: Node3D = $PlayersContainer
-@onready var menu: Control = $Menu
+@onready var menu: Control = $MainMenu
 @export var player_scene: PackedScene
 
 # UI elements

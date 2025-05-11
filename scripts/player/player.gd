@@ -4,7 +4,7 @@ class_name Character
 enum State {
 	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, 
 	WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, 
-	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1
+	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1, LEDGE_HANG
 }
 
 @onready var seeker_spawn = $".".seeker_spawn
@@ -112,6 +112,14 @@ var just_dived = false
 
 @onready var nickname: Label3D = $PlayerNick/Nickname
 
+# Ledge Grab 
+var ledge_grab_distance := 2.0
+@onready var raycast_ledge = $RayCastLedgeCheck/RaycastHead
+@onready var raycast_facing_wall = $RayCastFacingWall
+@onready var ledge_cast_holder = $RayCastLedgeCheck
+@onready var ledge_marker = $RayCastLedgeCheck/RaycastHead/LedgeMarker
+var ledge_point : Vector3
+
 @export_category("Objects")
 @export var _body: Node3D = null
 
@@ -164,6 +172,7 @@ func _physics_process(delta):
 		freeze()
 		_body.animate(current_state)
 		return
+	
 	
 	update_debug_menu()
 	handle_input()
@@ -256,6 +265,7 @@ func update_state(delta):
 				velocity.y = ground_pound_speed
 
 		State.FALL:
+			ledge_detect()
 			if is_on_floor():
 				current_state = State.LAND if !Input.is_action_pressed("ground_pound") else State.CROUCH
 			elif Input.is_action_just_pressed("ground_pound"):
@@ -264,9 +274,16 @@ func update_state(delta):
 				velocity.y = ground_pound_speed
 			elif jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 				jump()
+			elif Input.is_action_pressed("jump") and ledge_marker.visible and velocity.y < 0.0:
+				var ledge_distance = global_transform.origin.distance_to(ledge_marker.global_transform.origin)
+				if ledge_distance < ledge_grab_distance:
+					current_state = State.LEDGE_HANG
+					velocity = Vector3.ZERO
 			elif is_touching_wall() and is_moving_into_wall() and bonk_cast.is_colliding():
 				current_state = State.WALL_SLIDE
 				wall_slide_timer = 0.0
+			
+
 
 		State.GROUND_POUND:
 			if !ground_pound_started:
@@ -406,6 +423,27 @@ func update_state(delta):
 			just_long_jumped = false
 			if(velocity.y < 0):
 				current_state = State.FALL
+		
+		State.LEDGE_HANG:
+			if ledge_marker.visible and velocity.y < 0.0:
+				ledge_marker.visible = false
+				var ledge_distance = global_transform.origin.distance_to(ledge_marker.global_transform.origin)
+				if ledge_distance < ledge_grab_distance:
+					var wall_normal = get_wall_normal()
+					var target_pos = ledge_marker.global_transform.origin + Vector3(0, -1, 0) + wall_normal * 0.5
+					move_to_safe_ledge_position(target_pos)
+					velocity = Vector3.ZERO
+					current_state = State.LEDGE_HANG
+			
+			look_at(global_transform.origin - get_wall_normal(), Vector3.UP)
+			velocity = Vector3.ZERO
+
+			if $TrueLedgeCheck.is_colliding():
+				current_state = State.FALL
+			elif Input.is_action_just_pressed("jump"):
+				jump()
+			elif Input.is_action_just_pressed("ground_pound"):
+				current_state = State.FALL
 
 func freeze():
 	pass
@@ -480,7 +518,7 @@ func move_character(delta):
 		move_and_slide()
 		return
 	
-	if current_state == State.BONK || current_state == State.CROUCH || current_state == State.EMOTE1:
+	if current_state == State.BONK || current_state == State.CROUCH || current_state == State.EMOTE1 || current_state == State.LEDGE_HANG:
 		direction = Vector3(0, 0, 0)
 		
 	if (current_state == State.DIVE):
@@ -538,7 +576,7 @@ func _respawn():
 func change_nick(new_nick: String):
 	if nickname:
 		nickname.text = new_nick
-		
+
 func get_texture_from_name(skin_name: String) -> CompressedTexture2D:
 	match skin_name:
 		"blue": return blue_texture
@@ -651,3 +689,49 @@ func set_team(team_name: String):
 
 func get_team():
 	return team
+
+func ledge_detect():
+	if raycast_facing_wall.is_colliding():
+		var hit_point = raycast_facing_wall.get_collision_point()
+		var offset = Vector3(0, 3, 0)
+		
+		var new_transform = ledge_cast_holder.global_transform
+		new_transform.origin = hit_point + offset
+		ledge_cast_holder.global_transform = new_transform
+		
+		raycast_ledge.force_raycast_update()
+		if raycast_ledge.is_colliding():
+			ledge_point = raycast_ledge.get_collision_point()
+			ledge_marker.global_transform.origin = ledge_point
+			ledge_marker.visible = true
+			raycast_ledge.enabled = true
+		else:
+			ledge_marker.visible = false
+			raycast_ledge.enabled = false
+	else:
+		ledge_marker.visible = false
+		raycast_ledge.enabled = false
+
+func move_to_safe_ledge_position(target_pos: Vector3):
+	var space_state = get_world_3d().direct_space_state
+	var test_pos = target_pos
+	var shape = $CollisionShape3D.shape
+	var tries := 5
+	var step := -get_wall_normal() * 0.1
+
+	while tries > 0:
+		var shape_query = PhysicsShapeQueryParameters3D.new()
+		shape_query.shape = shape
+		shape_query.transform = Transform3D(Basis(), test_pos)
+		shape_query.collision_mask = collision_mask
+		shape_query.collide_with_areas = false
+		shape_query.collide_with_bodies = true
+
+		var collision = space_state.intersect_shape(shape_query, 1)
+
+		if collision.is_empty():
+			global_transform.origin = test_pos
+			return
+
+		test_pos += step
+		tries -= 1

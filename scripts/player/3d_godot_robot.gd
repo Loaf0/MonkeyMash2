@@ -6,7 +6,7 @@ const LERP_VELOCITY: float = 0.15
 enum State {
 	IDLE, WALK, RUN, JUMP, FALL, GROUND_POUND, DIVE, 
 	WALL_SLIDE, WALL_JUMP, LAND, GROUND_POUND_RECOVERY, 
-	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1
+	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1, LEDGE_HANG
 }
 
 @export_category("Objects")
@@ -45,6 +45,8 @@ func animate(state) -> void:
 			animation_player.play("WallJump", 0.3)
 		State.EMOTE1:
 			animation_player.play("Emote1", 0.2)
+		State.LEDGE_HANG:
+			animation_player.play("LedgeGrab", 0.2)
 
 @rpc("any_peer", "reliable")
 func sync_player_rotation(rotation_y: float) -> void:

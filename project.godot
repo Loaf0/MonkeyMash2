@@ -32,7 +32,7 @@ window/stretch/aspect="keep_width"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/bsp_importer/plugin.cfg")
+enabled=PackedStringArray()
 
 [file_customization]
 

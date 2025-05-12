@@ -148,7 +148,7 @@ func lerp_cam_to(delta: float) -> void:
 	cam.position = cam.position.lerp(desired_pos, delta * 3.0)
 
 	var direction = (desired_look_pos - cam.position).normalized()
-	var target_rotation = cam.global_transform.looking_at(desired_look_pos, Vector3.UP).basis
+	var target_rotation = cam.global_transform.looking_at(desired_look_pos, Vector3.UP).basis.orthonormalized()
 	var current_transform = cam.global_transform
 	current_transform.basis = current_transform.basis.slerp(target_rotation, delta * 1.0)
 	cam.global_transform = current_transform

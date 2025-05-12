@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1lpe6chkthi0"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02pkc"]
+diffuse_mode = 2
+specular_mode = 2
+metallic_specular = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_it1hw"]
+
+[sub_resource type="Curve" id="Curve_ooin1"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.236318, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="ParticleTrail" type="CPUParticles3D"]
+transform = Transform3D(-1, 0, 1.50996e-07, 0, 1, 0, -1.50996e-07, 0, -1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_02pkc")
+amount = 30
+mesh = SubResource("SphereMesh_it1hw")
+emission_shape = 1
+emission_sphere_radius = 0.2
+particle_flag_align_y = true
+direction = Vector3(0, 0, 0)
+gravity = Vector3(0, 0.1, 0)
+scale_amount_min = 0.75
+scale_amount_curve = SubResource("Curve_ooin1")

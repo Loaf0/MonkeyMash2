@@ -157,7 +157,12 @@ func _ready():
 
 func _physics_process(delta):
 	$PlayerNick/Team.text = team if team != "hider" else ""
-
+	
+	if current_state == State.RUN:
+		$ParticleTrail.emitting = true
+	else:
+		$ParticleTrail.emitting = false
+	
 	if !is_multiplayer_authority():
 		nickname.visible = (Global.local_player_team == team)
 		_body.animate(current_state)
@@ -278,7 +283,6 @@ func update_state(delta):
 				var ledge_distance = global_transform.origin.distance_to(ledge_marker.global_transform.origin)
 				if ledge_distance < ledge_grab_distance:
 					current_state = State.LEDGE_HANG
-					velocity = Vector3.ZERO
 			elif is_touching_wall() and is_moving_into_wall() and bonk_cast.is_colliding():
 				current_state = State.WALL_SLIDE
 				wall_slide_timer = 0.0
@@ -703,7 +707,7 @@ func ledge_detect():
 		if raycast_ledge.is_colliding():
 			ledge_point = raycast_ledge.get_collision_point()
 			ledge_marker.global_transform.origin = ledge_point
-			#ledge_marker.visible = true
+			ledge_marker.visible = true
 			raycast_ledge.enabled = true
 		else:
 			ledge_marker.visible = false

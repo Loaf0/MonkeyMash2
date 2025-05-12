@@ -1,15 +1,10 @@
 extends Node3D
 
-@onready var skin_input: OptionButton = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option2/OptionButton
-@onready var nick_input: LineEdit = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option1/NickInput
-@onready var address_input: LineEdit = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option3/AddressInput
-@onready var port_input : LineEdit = $MainMenu/MainContainer/MainMenu/VBoxContainer/Option4/PortInput
-
 @onready var seeker_spawn = $Environment/Map/SeekerSpawn
 @onready var hider_spawn = $Environment/Map/HiderSpawn
 
 @onready var players_container: Node3D = $PlayersContainer
-@onready var menu: Control = $MainMenu
+@onready var menu: Control = $UI
 @export var player_scene: PackedScene
 
 # UI elements
@@ -27,10 +22,8 @@ extends Node3D
 var chat_visible = false
 var local_id
 
-
 func _ready():
 	multiplayer_chat.modulate.a = 0.3
-	menu.show()
 	multiplayer_chat.set_process_input(true)
 	local_id = multiplayer.get_unique_id()
 
@@ -39,6 +32,11 @@ func _ready():
 		
 	Network.connect("player_connected", Callable(self, "_on_player_connected"))
 	multiplayer.peer_disconnected.connect(_remove_player)
+	
+	if Settings.hosting:
+		_on_host_pressed()
+	else:
+		_on_join_pressed()
 
 func _process(_delta: float) -> void:
 	if Input.is_action_pressed("show_player_list"):
@@ -56,18 +54,12 @@ func _on_player_connected(peer_id, player_info):
 	_add_player(peer_id, player_info)
 
 func _on_host_pressed():
-	var port = int(port_input.text)
-	menu.hide()
-	Network.start_host(port)
+	Network.start_host(Settings.port)
 	$UI/HostCommands.show()
 	$PlayersContainer/Camera.queue_free()
 
 func _on_join_pressed():
-	menu.hide()
-	var skin_color = "blue"
-	if skin_input and skin_input.selected >= 0: 
-		skin_color = skin_input.get_item_text(skin_input.selected).strip_edges().to_lower()
-	Network.join_game(nick_input.text.strip_edges(), skin_color, address_input.text.strip_edges(), int(port_input.text))
+	Network.join_game(Settings.nickname, Settings.color.to_lower(), Settings.ip, int(Settings.port))
 
 func _add_player(id: int, player_info : Dictionary):
 	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:
@@ -141,9 +133,6 @@ func _on_quit_pressed() -> void:
 	
 # ---------- MULTIPLAYER CHAT ----------
 func toggle_chat():
-	if menu.visible:
-		return
-
 	chat_visible = !chat_visible
 	if chat_visible:
 		multiplayer_chat.modulate.a = 1.0

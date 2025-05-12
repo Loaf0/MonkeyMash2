@@ -1,5 +1,7 @@
 extends Control
 
+@export var level_scene: PackedScene
+
 @export_category("Skin Colors")
 @export var blue_texture : CompressedTexture2D
 @export var yellow_texture : CompressedTexture2D
@@ -26,6 +28,9 @@ var current_state: cameraLocations = cameraLocations.MAIN
 
 @onready var char_select_menu = $CharacterSelectButtons
 @onready var main_menu = $MainMenuButtons
+@onready var join_menu = $JoinButtons
+@onready var host_menu = $HostButtons
+@onready var settings_menu = $SettingsButtons
 
 @onready var anim = $"CanvasLayer/3DGodotRobot/AnimationPlayer"
 @onready var cam = $CanvasLayer/MainMenuCamera
@@ -41,6 +46,9 @@ var desired_look_pos : Vector3
 func _ready() -> void:
 	char_select_menu.visible = false
 	main_menu.visible = true
+	join_menu.visible = false
+	host_menu.visible = false
+	settings_menu.visible = false
 	var x = orbit_center.x + orbit_radius * cos(orbit_angle)
 	var z = orbit_center.z + orbit_radius * sin(orbit_angle)
 	var y = orbit_height
@@ -72,10 +80,13 @@ func _process(delta: float) -> void:
 			
 
 func _on_host_pressed() -> void:
-	pass # Replace with function body.
+	Settings.hosting = true
+	if level_scene:
+		get_tree().change_scene_to_packed(level_scene)
 
 func _on_join_pressed() -> void:
-	pass # Replace with function body.
+	join_menu.show()
+	main_menu.hide()
 
 func _on_edit_char_pressed() -> void:
 	anim.play("Idle")
@@ -84,7 +95,8 @@ func _on_edit_char_pressed() -> void:
 	main_menu.visible = false
 
 func _on_settings_pressed() -> void:
-	pass # Replace with function body.
+	settings_menu.show()
+	main_menu.hide()
 
 func _on_exit_pressed() -> void:
 	get_tree().quit()
@@ -92,7 +104,7 @@ func _on_exit_pressed() -> void:
 func _on_skin_select_item_selected(index: int) -> void:
 	print("Skin select index " + str(index) + " " + skin_selector.get_item_text(index))
 	set_player_skin(skin_selector.get_item_text(index))
-	Settings.COLOR = skin_selector.get_item_text(index)
+	Settings.color = skin_selector.get_item_text(index)
 
 func _on_return_pressed() -> void:
 	current_state = cameraLocations.MAIN
@@ -142,4 +154,28 @@ func lerp_cam_to(delta: float) -> void:
 	cam.global_transform = current_transform
 
 func _on_nick_input_text_changed(new_text: String) -> void:
-	Settings.NAME = new_text
+	Settings.nickname = new_text
+
+func _on_join_host_return_pressed() -> void:
+	join_menu.hide()
+	host_menu.hide()
+	settings_menu.hide()
+	main_menu.show()
+
+func _on_ip_text_changed(new_text: String) -> void:
+	Settings.ip = new_text
+
+func _on_port_text_changed(new_text: String) -> void:
+	Settings.port = new_text
+
+func _on_join_game_pressed() -> void:
+	Settings.hosting = false
+	if level_scene:
+		get_tree().change_scene_to_packed(level_scene)
+
+func _on_main_host_pressed() -> void:
+	host_menu.show()
+	main_menu.hide()
+
+func _on_h_slider_value_changed(value: float) -> void:
+	Settings.MOUSE_SENSITIVITY = value

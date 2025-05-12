@@ -1,7 +1,8 @@
-[gd_scene load_steps=52 format=4 uid="uid://dp8ajof33rkyy"]
+[gd_scene load_steps=53 format=4 uid="uid://dp8ajof33rkyy"]
 
 [ext_resource type="Script" uid="uid://hlx1lumkqmgk" path="res://scenes/Menus/main_menu.gd" id="1_qm178"]
 [ext_resource type="PackedScene" uid="uid://bcm2jbg48g5aj" path="res://scenes/levels/test2/map.tscn" id="2_3b8pq"]
+[ext_resource type="PackedScene" uid="uid://dugaivbj1o66n" path="res://scenes/levels/test2/level.tscn" id="2_cvoyn"]
 [ext_resource type="Texture2D" uid="uid://cw6pxwst2gh85" path="res://assets/3d/Models/player/GodotRobotPaletteSwap/GodotYellowPalette.png" id="3_4dwwe"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://assets/3d/Models/player/3DGodotRobot_GodotPalette.png" id="3_qm178"]
 [ext_resource type="FontFile" uid="uid://djre78oagy06t" path="res://assets/2d/fonts/Kurland.ttf" id="3_xfgxo"]
@@ -5189,6 +5190,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_qm178")
+level_scene = ExtResource("2_cvoyn")
 blue_texture = ExtResource("4_6778i")
 yellow_texture = ExtResource("3_4dwwe")
 green_texture = ExtResource("4_qw3wd")
@@ -5529,7 +5531,64 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Exit"
 
+[node name="SettingsButtons" type="MarginContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -250.0
+offset_right = 250.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBox" type="VBoxContainer" parent="SettingsButtons"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="SettingsButtons/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Mouse Sensitivity"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 10
+
+[node name="HSlider" type="HSlider" parent="SettingsButtons/VBox/MarginContainer"]
+layout_mode = 2
+min_value = 0.05
+max_value = 0.35
+step = 0.05
+value = 0.2
+
+[node name="MarginContainer5" type="MarginContainer" parent="SettingsButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="Return" type="Button" parent="SettingsButtons/VBox/MarginContainer5"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Exit"
+
 [node name="CharacterSelectButtons" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -5613,12 +5672,159 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = " Return to Main Menu "
 
-[connection signal="pressed" from="MainMenuButtons/VBox/MarginContainer/Host" to="." method="_on_host_pressed"]
+[node name="JoinButtons" type="MarginContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -313.5
+offset_top = -159.5
+offset_right = 313.5
+offset_bottom = 159.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBox" type="VBoxContainer" parent="JoinButtons"]
+layout_mode = 2
+
+[node name="MarginContainer3" type="MarginContainer" parent="JoinButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="IP" type="LineEdit" parent="JoinButtons/VBox/MarginContainer3"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xfgxo")
+theme_override_font_sizes/font_size = 65
+placeholder_text = "IP Address"
+max_length = 20
+expand_to_text_length = true
+
+[node name="MarginContainer4" type="MarginContainer" parent="JoinButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="Port" type="LineEdit" parent="JoinButtons/VBox/MarginContainer4"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xfgxo")
+theme_override_font_sizes/font_size = 65
+placeholder_text = "Port"
+max_length = 20
+expand_to_text_length = true
+
+[node name="MarginContainer2" type="MarginContainer" parent="JoinButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="JoinGame" type="Button" parent="JoinButtons/VBox/MarginContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Join Game"
+
+[node name="MarginContainer5" type="MarginContainer" parent="JoinButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="Return" type="Button" parent="JoinButtons/VBox/MarginContainer5"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = " Return to Main Menu "
+
+[node name="HostButtons" type="MarginContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -313.5
+offset_top = -159.5
+offset_right = 313.5
+offset_bottom = 159.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBox" type="VBoxContainer" parent="HostButtons"]
+layout_mode = 2
+
+[node name="MarginContainer4" type="MarginContainer" parent="HostButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="Port" type="LineEdit" parent="HostButtons/VBox/MarginContainer4"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xfgxo")
+theme_override_font_sizes/font_size = 65
+text = "25565"
+placeholder_text = "Port"
+max_length = 20
+expand_to_text_length = true
+
+[node name="MarginContainer2" type="MarginContainer" parent="HostButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="HostGame" type="Button" parent="HostButtons/VBox/MarginContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Host Game"
+
+[node name="MarginContainer5" type="MarginContainer" parent="HostButtons/VBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+
+[node name="Return" type="Button" parent="HostButtons/VBox/MarginContainer5"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = " Return to Main Menu "
+
+[connection signal="pressed" from="MainMenuButtons/VBox/MarginContainer/Host" to="." method="_on_main_host_pressed"]
 [connection signal="pressed" from="MainMenuButtons/VBox/MarginContainer2/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="MainMenuButtons/VBox/MarginContainer3/EditChar" to="." method="_on_edit_char_pressed"]
 [connection signal="pressed" from="MainMenuButtons/VBox/MarginContainer4/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MainMenuButtons/VBox/MarginContainer5/Exit" to="." method="_on_exit_pressed"]
+[connection signal="value_changed" from="SettingsButtons/VBox/MarginContainer/HSlider" to="." method="_on_h_slider_value_changed"]
+[connection signal="pressed" from="SettingsButtons/VBox/MarginContainer5/Return" to="." method="_on_join_host_return_pressed"]
 [connection signal="text_changed" from="CharacterSelectButtons/VBox/MarginContainer3/NickInput" to="." method="_on_nick_input_text_changed"]
 [connection signal="item_focused" from="CharacterSelectButtons/VBox/MarginContainer/SkinSelect" to="." method="_on_skin_select_item_focused"]
 [connection signal="item_selected" from="CharacterSelectButtons/VBox/MarginContainer/SkinSelect" to="." method="_on_skin_select_item_selected"]
 [connection signal="pressed" from="CharacterSelectButtons/VBox/MarginContainer2/Return" to="." method="_on_return_pressed"]
+[connection signal="text_changed" from="JoinButtons/VBox/MarginContainer3/IP" to="." method="_on_ip_text_changed"]
+[connection signal="text_changed" from="JoinButtons/VBox/MarginContainer4/Port" to="." method="_on_port_text_changed"]
+[connection signal="pressed" from="JoinButtons/VBox/MarginContainer2/JoinGame" to="." method="_on_join_game_pressed"]
+[connection signal="pressed" from="JoinButtons/VBox/MarginContainer5/Return" to="." method="_on_join_return_pressed"]
+[connection signal="text_changed" from="HostButtons/VBox/MarginContainer4/Port" to="." method="_on_port_text_changed"]
+[connection signal="pressed" from="HostButtons/VBox/MarginContainer2/HostGame" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="HostButtons/VBox/MarginContainer5/Return" to="." method="_on_join_return_pressed"]

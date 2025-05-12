@@ -703,7 +703,7 @@ func ledge_detect():
 		if raycast_ledge.is_colliding():
 			ledge_point = raycast_ledge.get_collision_point()
 			ledge_marker.global_transform.origin = ledge_point
-			ledge_marker.visible = true
+			#ledge_marker.visible = true
 			raycast_ledge.enabled = true
 		else:
 			ledge_marker.visible = false

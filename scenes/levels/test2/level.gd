@@ -152,9 +152,9 @@ func sync_player_name(id: int, nickname: String):
 @rpc("any_peer", "call_local")
 func sync_player_position(id: int, new_position: Vector3):
 	var player = players_container.get_node(str(id))
-	if player:
-		player.position = new_position
-		
+	if player and !player.is_multiplayer_authority():
+		player.target_position = new_position
+
 @rpc("any_peer", "call_local")
 func sync_player_skin(id: int, skin_name: String):
 	if id == 1: return # ignore host

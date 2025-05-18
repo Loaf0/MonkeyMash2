@@ -1,8 +1,28 @@
-[gd_scene load_steps=6 format=3 uid="uid://bcm2jbg48g5aj"]
+[gd_scene load_steps=10 format=3 uid="uid://bcm2jbg48g5aj"]
 
 [ext_resource type="Texture2D" uid="uid://chawqtd3fcydp" path="res://assets/2d/textures/test/texture_01.png" id="1_bbylb"]
 [ext_resource type="PackedScene" uid="uid://4kh2e0uromah" path="res://scenes/levels/world_environment.tscn" id="1_nvy1u"]
+[ext_resource type="Texture2D" uid="uid://bl5alisinxpya" path="res://assets/2d/textures/skyboxes/Epic_BlueSunset_EquiRect_flat.png" id="2_smerw"]
 [ext_resource type="PackedScene" uid="uid://cw8826mu2qi75" path="res://scenes/Interactables/spring.tscn" id="3_nvy1u"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nvy1u"]
+panorama = ExtResource("2_smerw")
+
+[sub_resource type="Sky" id="Sky_smerw"]
+sky_material = SubResource("PanoramaSkyMaterial_nvy1u")
+
+[sub_resource type="Environment" id="Environment_yx20g"]
+background_mode = 2
+sky = SubResource("Sky_smerw")
+ambient_light_source = 2
+tonemap_mode = 2
+tonemap_white = 0.8
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_energy = 1.5
+adjustment_enabled = true
+adjustment_saturation = 1.2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tc26a"]
 albedo_color = Color(0.26169, 0.66, 0.1914, 1)
@@ -20,12 +40,15 @@ grow_amount = 0.337
 [node name="Map" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.95882, 0.264615, -0.103169, 0, 0.363251, 0.931691, 0.284015, -0.893324, 0.348292, 0.0464249, 8.5706, 0.0995026)
-light_energy = 1.5
+transform = Transform3D(0.96873, -0.0239964, 0.246953, -0.247678, -0.152708, 0.956732, 0.0147537, -0.98798, -0.153876, -8.36837, 23.0812, 0.0995026)
+light_energy = 0.7
 shadow_enabled = true
 shadow_blur = 0.5
+directional_shadow_max_distance = 500.0
+directional_shadow_pancake_size = 30.0
 
 [node name="WorldEnvironment" parent="." instance=ExtResource("1_nvy1u")]
+environment = SubResource("Environment_yx20g")
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
@@ -744,8 +767,8 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -27.0303, 26.6, -29.490
 [node name="Lights" type="Node3D" parent="."]
 
 [node name="SpotLight3D" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 23.4157, 9.6144, 1.62233)
-omni_range = 23.691
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 23.4157, 7.4933, 1.62233)
+omni_range = 18.072
 omni_attenuation = 0.097
 
 [node name="SpotLight3D4" type="OmniLight3D" parent="Lights"]

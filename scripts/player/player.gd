@@ -9,6 +9,8 @@ enum State {
 
 @onready var smoke_emit = $SmokeParticle
 @onready var spark_emit = $SparkParticle
+@export var target_position : Vector3
+var max_desync_distance = 5.0
 
 @export_category("General")
 @export var gravity := -12.0
@@ -162,8 +164,13 @@ func _physics_process(delta):
 	if !is_multiplayer_authority():
 		nickname.visible = (Global.local_player_team == team)
 		_body.animate(current_state)
+		var lerp_speed = 10.0
+		position = position.lerp(target_position, clamp(delta * lerp_speed, 0.0, 1.0))
+		if position.distance_to(target_position) > max_desync_distance:
+			position = target_position
 		return
 	
+	target_position = position
 	$PlayerNick/Team.text = team if team != "hider" else ""
 	Global.local_player_team = team
 	nickname.hide()
@@ -442,7 +449,9 @@ func update_state(delta):
 					velocity = Vector3.ZERO
 					current_state = State.LEDGE_HANG
 			
-			look_at(global_transform.origin - get_wall_normal(), Vector3.UP)
+			var look_target = global_transform.origin - get_wall_normal()
+			if not global_transform.origin.is_equal_approx(look_target):
+				look_at(look_target, Vector3.UP)
 			velocity = Vector3.ZERO
 
 			if $TrueLedgeCheck.is_colliding():

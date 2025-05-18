@@ -1,11 +1,22 @@
 extends Node3D
 
-@onready var seeker_spawn = $Environment/Map/SeekerSpawn
-@onready var hider_spawn = $Environment/Map/HiderSpawn
+@onready var seeker_spawn = $SeekerSpawn
+@onready var hider_spawn = $HiderSpawn
 
 @onready var players_container: Node3D = $PlayersContainer
 @onready var menu: Control = $UI
 @export var player_scene: PackedScene
+
+@onready var game_timer = $GameTime
+@onready var game_timer_label = $UI/Timer
+@onready var blind_timer = $BlindTimer
+@export var game_length = 330.0
+@export var blind_length = 20.0
+@export var starting_seekers = 1
+
+@onready var blind_length_input = $UI/HostCommands/VFlowContainer/HBoxContainer/BlindLength
+@onready var game_length_input = $UI/HostCommands/VFlowContainer/HBoxContainer2/GameLength2
+@onready var seekers_input = $UI/HostCommands/VFlowContainer/HBoxContainer3/Seekers
 
 # UI elements
 @onready var player_list = $"UI/Player List"
@@ -13,6 +24,8 @@ extends Node3D
 
 # Hiders Left
 @onready var hiders_left: Label = $UI/HidersLeft
+
+var current_hiders_left = 0
 
 # multiplayer chat
 @onready var message: LineEdit = $UI/Chat/HBoxContainer/Message
@@ -23,7 +36,7 @@ var chat_visible = false
 var local_id
 
 func _ready():
-	multiplayer_chat.modulate.a = 0.3
+	multiplayer_chat.modulate.a = 0.5
 	multiplayer_chat.set_process_input(true)
 	local_id = multiplayer.get_unique_id()
 
@@ -43,6 +56,23 @@ func _process(_delta: float) -> void:
 		player_list.show()
 	else:
 		player_list.hide()
+
+func _physics_process(_delta: float) -> void:
+	update_timer()
+	
+	for player in players_container.get_children():
+		if player.global_position.y < -50:
+			if player.has_method("get_team"):
+				var team = player.get_team()
+				if team == "hider":
+					rpc_id(1, "tag_hider", "server", player.name)
+				else:
+					_respawn_player(player)
+
+func _respawn_player(player):
+	var team = player.get_team()
+	player.velocity = Vector3.ZERO
+	player.global_position = get_spawn_point(team)
 
 func _on_player_connected(peer_id, player_info):
 	for id in Network.players.keys():
@@ -104,7 +134,11 @@ func sync_player_team(id: int, team_name: String):
 
 		if id == multiplayer.get_unique_id():
 			Global.local_player_team = team_name
-		
+
+	# ✅ Update local dictionary
+	if Network.players.has(id):
+		Network.players[id]["team"] = team_name
+
 	update_hiders_left()
 	update_player_list_label()
 
@@ -138,7 +172,7 @@ func toggle_chat():
 		multiplayer_chat.modulate.a = 1.0
 		message.grab_focus()
 	else:
-		multiplayer_chat.modulate.a = 0.3
+		multiplayer_chat.modulate.a = 0.5
 		message.release_focus()
 		get_viewport().set_input_as_handled()
 
@@ -188,31 +222,53 @@ func msg_rpc(nick, msg):
 
 	chat.text = "\n".join(lines)
 
+func _get_random_peers(count: int) -> Array:
+	var all_ids := Network.players.keys()
+	all_ids = all_ids.filter(func(id): return id != 1)  # Exclude server
+	all_ids.shuffle()
+
+	return all_ids.slice(0, min(count, all_ids.size()))
+
 func _on_reset_game():
-	if multiplayer.get_unique_id() != 1:
-		return
-	
-	var random_peer_id = _get_random_peer()
-	if random_peer_id == -1:
+	if not multiplayer.is_server():
 		return
 
-	# Assign seeker
-	Network.players[random_peer_id]["team"] = "seeker"
-	rpc_id(random_peer_id, "sync_player_team", random_peer_id, "seeker")
-	
-	var seeker_nick = Network.players[random_peer_id]["nick"]
-	rpc("msg_rpc", "Server", "Player " + seeker_nick + " has been assigned to Seeker!")
+	# Get all player IDs excluding the server (ID 1)
+	var all_ids := Network.players.keys()
+	all_ids = all_ids.filter(func(id): return id != 1)
+	all_ids.shuffle()
 
-	# Assign everyone else to hider
-	for id in Network.players.keys():
-		if id != 1 and id != random_peer_id:
-			Network.players[id]["team"] = "hider"
-			rpc_id(id, "sync_player_team", id, "hider")
+	var seeker_ids := all_ids.slice(0, min(starting_seekers, all_ids.size()))
+	var hider_ids := all_ids.slice(seeker_ids.size(), all_ids.size())
+
+	for id in seeker_ids:
+		Network.players[id]["team"] = "seeker"
+		rpc_id(id, "sync_player_team", id, "seeker")
+		var nick = Network.players[id]["nick"]
+		rpc("msg_rpc", "Server", "Player " + nick + " has been assigned to Seeker!")
+	
+	for id in hider_ids:
+		Network.players[id]["team"] = "hider"
+		rpc_id(id, "sync_player_team", id, "hider")
+
+	#unblind all
+	for player in players_container.get_children():
+		var pid = player.get_multiplayer_authority()
+		print("Unblinding player ID:", pid)
+		player.rpc_id(pid, "remote_set_blind_deaf_dumb", false)
+	
 	update_hiders_left()
 	update_player_list_label()
+	
+	await get_tree().create_timer(0.5).timeout
+
+	blind_seekers_for_duration(10.0)
 
 @rpc("any_peer", "call_local")
 func tag_hider(seeker_id: String, hider_id: String):
+	if not multiplayer.is_server():
+		return
+	
 	var hider = players_container.get_node_or_null(hider_id)
 	if not hider:
 		return
@@ -230,6 +286,9 @@ func tag_hider(seeker_id: String, hider_id: String):
 	rpc("sync_player_team", int(hider_id), "seeker")
 	rpc("msg_rpc", "Server", "Player " + Network.players[int(hider_id)]["nick"] + " is now a Seeker!")
 	
+	if current_hiders_left == 0:
+		_on_seekers_win()
+	
 	update_hiders_left()
 	update_player_list_label()
 
@@ -242,7 +301,9 @@ func update_hiders_left():
 				hiders += 1
 			else:
 				seekers += 1
+
 	hiders_left.text = "Hiders : " + str(hiders) + "\nSeekers : " + str(seekers)
+	current_hiders_left = hiders
 
 func update_player_list_label():
 	var text = ""
@@ -253,10 +314,103 @@ func update_player_list_label():
 	player_list_label.text = text
 
 func _on_recalculate_timeout() -> void:
-	# update as backup if it ever gets desynced
 	update_hiders_left()
 	update_player_list_label()
 
+@rpc("call_local")
+func start_game_timer(server_start_time: float):
+	game_timer.start()
+	game_timer.wait_time = game_length
+	game_timer.start(server_start_time)
+	blind_timer.start(blind_length)
+
+
 func _on_restart_pressed() -> void:
-	if multiplayer.get_unique_id() == 1:
-		_on_reset_game()
+	if multiplayer.get_unique_id() != 1:
+		return
+
+	_on_reset_game()
+
+	game_timer.wait_time = game_length
+	game_timer.start()
+	rpc("start_game_timer", 0.0)
+
+
+func _on_game_timer_timeout():
+	game_timer.stop()
+	
+	var winners := []
+	for player in players_container.get_children():
+		if player.has_method("get_team") and player.get_team() == "hider":
+			var id = int(player.name)
+			if Network.players.has(id):
+				winners.append(Network.players[id]["nick"])
+	
+	if winners.size() > 0 and multiplayer.is_server():
+		rpc("msg_rpc", "Server", "Time's up! Hiders win!")
+		rpc("msg_rpc", "Server", "Winners: " + ", ".join(winners))
+
+func _on_seekers_win():
+	game_timer.stop()
+
+	var winners := []
+	for player in players_container.get_children():
+		if player.has_method("get_team") and player.get_team() == "seeker":
+			var id = int(player.name)
+			if Network.players.has(id):
+				winners.append(Network.players[id]["nick"])
+		
+	if winners.size() > 0 and multiplayer.is_server():
+		rpc("msg_rpc", "Server", "All hiders found! Seekers win!")
+		rpc("msg_rpc", "Server", "Winners: " + ", ".join(winners))
+
+
+func update_timer():
+	var remaining = int(ceil(game_timer.time_left))
+	
+	if game_timer.is_stopped():
+		remaining = game_length
+
+	var remaining_int = int(remaining)
+	var minutes = remaining_int / 60
+	var seconds = remaining_int % 60
+	var timer_text = "Timer %02d:%02d" % [minutes, seconds]
+
+	if !blind_timer.is_stopped():
+		var blind_text = "Seekers released in %ds" % int(ceil(blind_timer.time_left))
+		game_timer_label.text = "%s | %s" % [blind_text, timer_text]
+	else:
+		game_timer_label.text = timer_text
+
+func blind_seekers_for_duration(duration: float):
+	if not multiplayer.is_server():
+		return
+
+	print("Blinding seekers for ", duration, " seconds")
+	
+	for player in players_container.get_children():
+		if player.has_method("get_team") and player.get_team() == "seeker":
+			var pid = int(player.name)
+			print("Blinding player ID:", pid)
+			player.rpc_id(pid, "remote_set_blind_deaf_dumb", true)
+
+	blind_timer.start(blind_length)
+
+func _on_blind_timer_timeout() -> void:
+	if !multiplayer.is_server():
+		return
+	
+	for player in players_container.get_children():
+		var pid = player.get_multiplayer_authority()
+		print("Unblinding player ID:", pid)
+		player.rpc_id(pid, "remote_set_blind_deaf_dumb", false)
+
+func _on_game_length_value_changed(value: float) -> void:
+	game_length = int(value)
+
+func _on_blind_length_value_changed(value: float) -> void:
+	blind_length = int(value)
+
+func _on_seekers_value_changed(value: float) -> void:
+		starting_seekers = int(value)
+		print(value)

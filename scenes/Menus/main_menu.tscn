@@ -5827,4 +5827,4 @@ text = " Return to Main Menu "
 [connection signal="pressed" from="JoinButtons/VBox/MarginContainer5/Return" to="." method="_on_join_return_pressed"]
 [connection signal="text_changed" from="HostButtons/VBox/MarginContainer4/Port" to="." method="_on_port_text_changed"]
 [connection signal="pressed" from="HostButtons/VBox/MarginContainer2/HostGame" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="HostButtons/VBox/MarginContainer5/Return" to="." method="_on_join_return_pressed"]
+[connection signal="pressed" from="HostButtons/VBox/MarginContainer5/Return" to="." method="_on_join_host_return_pressed"]

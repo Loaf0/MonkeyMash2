@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://4kh2e0uromah"]
 
-[ext_resource type="Texture2D" uid="uid://bkubbogydq1lw" path="res://scenes/levels/test/Skybox.png" id="1_cdkjo"]
+[ext_resource type="Texture2D" uid="uid://bl5alisinxpya" path="res://assets/2d/textures/skyboxes/Epic_BlueSunset_EquiRect_flat.png" id="1_cdkjo"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nvy1u"]
 panorama = ExtResource("1_cdkjo")

@@ -2,7 +2,7 @@ extends Node
 
 const SERVER_ADDRESS: String = "127.0.0.1"
 var SERVER_PORT: int = 8080
-const MAX_PLAYERS : int = 10
+const MAX_PLAYERS : int = 12
 
 var players = {}
 var player_info = {

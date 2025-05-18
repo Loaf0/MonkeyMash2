@@ -1,10 +1,21 @@
-[gd_scene load_steps=8 format=3 uid="uid://dugaivbj1o66n"]
+[gd_scene load_steps=9 format=3 uid="uid://dugaivbj1o66n"]
 
 [ext_resource type="Script" uid="uid://cpjgbyy1vfsu0" path="res://scenes/levels/test2/level.gd" id="1_e1sh7"]
 [ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://scenes/player/player.tscn" id="1_uvcbi"]
 [ext_resource type="FontFile" uid="uid://djre78oagy06t" path="res://assets/2d/fonts/Kurland.ttf" id="3_icc4p"]
 [ext_resource type="PackedScene" uid="uid://bcm2jbg48g5aj" path="res://scenes/levels/test2/map.tscn" id="5_gg06f"]
 [ext_resource type="PackedScene" uid="uid://djuigseoqr6rk" path="res://scenes/player/camera.tscn" id="6_74mb0"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_gg06f"]
+properties/0/path = NodePath(".:starting_seekers")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:blind_length")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:game_length")
+properties/2/spawn = true
+properties/2/replication_mode = 2
 
 [sub_resource type="LabelSettings" id="LabelSettings_gg06f"]
 font_size = 30
@@ -20,6 +31,22 @@ player_scene = ExtResource("1_uvcbi")
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://cffjduipbb3s5")
 spawn_path = NodePath("../PlayersContainer")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_gg06f")
+
+[node name="BlindTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="GameTime" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
+
+[node name="HiderSpawn" type="Node3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -70.1767, -48, 1)
+
+[node name="SeekerSpawn" type="Node3D" parent="."]
+transform = Transform3D(0.388229, -1.44889, 0, 1.44889, 0.388229, 0, 0, 0, 1.5, -24.8229, -37.8197, 0)
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
@@ -53,6 +80,27 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -11.0
 offset_top = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.294118)
+
+[node name="Timer" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -166.0
+offset_bottom = 30.0
+grow_horizontal = 0
+text = "Time Left : 0:00"
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="UI/Timer"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.294118)
@@ -130,18 +178,64 @@ color = Color(0, 0, 0, 0.294118)
 
 [node name="HostCommands" type="Control" parent="UI"]
 visible = false
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchor_right = 0.162
+anchor_bottom = 0.518
+offset_right = -0.0400085
+offset_bottom = -0.440002
 
-[node name="Restart" type="Button" parent="UI/HostCommands"]
+[node name="VFlowContainer" type="VBoxContainer" parent="UI/HostCommands"]
+layout_mode = 0
+offset_right = 392.0
+offset_bottom = 604.0
+
+[node name="Restart" type="Button" parent="UI/HostCommands/VFlowContainer"]
 layout_mode = 2
-offset_right = 210.0
-offset_bottom = 57.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 35
 text = "Reset Game"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HostCommands/VFlowContainer"]
+layout_mode = 2
+
+[node name="SeekerBlindLength" type="Label" parent="UI/HostCommands/VFlowContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Seeker Blind Length"
+
+[node name="BlindLength" type="SpinBox" parent="UI/HostCommands/VFlowContainer/HBoxContainer"]
+layout_mode = 2
+max_value = 500.0
+step = 5.0
+value = 30.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/HostCommands/VFlowContainer"]
+layout_mode = 2
+
+[node name="GameLength" type="Label" parent="UI/HostCommands/VFlowContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Game Length "
+
+[node name="GameLength2" type="SpinBox" parent="UI/HostCommands/VFlowContainer/HBoxContainer2"]
+layout_mode = 2
+max_value = 1000.0
+step = 15.0
+value = 330.0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="UI/HostCommands/VFlowContainer"]
+layout_mode = 2
+
+[node name="StartingSeekers" type="Label" parent="UI/HostCommands/VFlowContainer/HBoxContainer3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Starting Seekers"
+
+[node name="Seekers" type="SpinBox" parent="UI/HostCommands/VFlowContainer/HBoxContainer3"]
+layout_mode = 2
+max_value = 10.0
+value = 1.0
 
 [node name="PlayersContainer" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.041748, -4.76837e-07, -0.00557041)
@@ -160,6 +254,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 143, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/StaticBody3D"]
 shape = SubResource("BoxShape3D_enyjo")
 
+[connection signal="timeout" from="BlindTimer" to="." method="_on_blind_timer_timeout"]
+[connection signal="timeout" from="GameTime" to="." method="_on_game_timer_timeout"]
 [connection signal="timeout" from="UI/Recalculate" to="." method="_on_recalculate_timeout"]
 [connection signal="pressed" from="UI/Chat/HBoxContainer/Send" to="." method="_on_send_pressed"]
-[connection signal="pressed" from="UI/HostCommands/Restart" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="UI/HostCommands/VFlowContainer/Restart" to="." method="_on_restart_pressed"]
+[connection signal="value_changed" from="UI/HostCommands/VFlowContainer/HBoxContainer/BlindLength" to="." method="_on_blind_length_value_changed"]
+[connection signal="value_changed" from="UI/HostCommands/VFlowContainer/HBoxContainer2/GameLength2" to="." method="_on_game_length_value_changed"]
+[connection signal="value_changed" from="UI/HostCommands/VFlowContainer/HBoxContainer3/Seekers" to="." method="_on_seekers_value_changed"]

@@ -7,8 +7,8 @@ enum State {
 	BONK, CROUCH, SLIDE, LONG_JUMP, EMOTE1, LEDGE_HANG
 }
 
-@onready var seeker_spawn = $".".seeker_spawn
-@onready var hider_spawn = $".".hider_spawn
+@onready var smoke_emit = $SmokeParticle
+@onready var spark_emit = $SparkParticle
 
 @export_category("General")
 @export var gravity := -12.0
@@ -105,6 +105,9 @@ var jump_held := false
 var just_dived = false
 @onready var bonk_cast = $BonkCast
 
+var blind_deaf_dumb = false
+@onready var blind = $Blind
+
 @export var current_state: State = State.FALL
 
 @export var team : String 
@@ -138,8 +141,6 @@ var ledge_point : Vector3
 @export var pink_texture : CompressedTexture2D
 @export var orange_texture : CompressedTexture2D
 
-var _respawn_point = Vector3(0, 5, 0)
-
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
 	if is_multiplayer_authority():
@@ -158,11 +159,6 @@ func _ready():
 func _physics_process(delta):
 	$PlayerNick/Team.text = team if team != "hider" else ""
 	
-	if current_state == State.RUN:
-		$ParticleTrail.emitting = true
-	else:
-		$ParticleTrail.emitting = false
-	
 	if !is_multiplayer_authority():
 		nickname.visible = (Global.local_player_team == team)
 		_body.animate(current_state)
@@ -178,6 +174,11 @@ func _physics_process(delta):
 		_body.animate(current_state)
 		return
 	
+	if blind_deaf_dumb:
+		blind.visible = true
+		return
+	else:
+		blind.visible = false
 	
 	update_debug_menu()
 	handle_input()
@@ -332,6 +333,7 @@ func update_state(delta):
 				current_state = State.IDLE
 
 		State.GROUND_POUND_RECOVERY:
+			smoke_emit.emitting = true
 			recovery_timer -= delta
 			if jump_buffer_timer > 0.0:
 				velocity.y = jump_force * ground_pound_jump_multiplier
@@ -377,6 +379,7 @@ func update_state(delta):
 			if just_bonked:
 				stunned_timer = bonk_stun_time
 				bonk_timer = 0.0
+				spark_emit.emitting = true
 
 				var wall_normal = get_wall_normal()
 				if wall_normal == Vector3.ZERO:
@@ -564,7 +567,7 @@ func move_character(delta):
 	move_and_slide()
 
 func _check_fall_and_respawn():
-	if global_transform.origin.y < -500.0 or Input.is_action_just_pressed("respawn"):
+	if global_transform.origin.y < -50.0 or Input.is_action_just_pressed("respawn"):
 		_respawn()
 
 
@@ -573,8 +576,6 @@ func _respawn():
 		var level = get_tree().get_root().get_node("Level")
 		if level and multiplayer.get_unique_id() != 1:
 			level.rpc_id(1, "tag_hider", "server", self.name)
-	global_transform.origin = _respawn_point
-	velocity = Vector3.ZERO
 
 @rpc("any_peer", "reliable")
 func change_nick(new_nick: String):
@@ -697,7 +698,7 @@ func get_team():
 func ledge_detect():
 	if raycast_facing_wall.is_colliding():
 		var hit_point = raycast_facing_wall.get_collision_point()
-		var offset = Vector3(0, 3, 0)
+		var offset = Vector3(0, .5, 0)
 		
 		var new_transform = ledge_cast_holder.global_transform
 		new_transform.origin = hit_point + offset
@@ -718,15 +719,18 @@ func ledge_detect():
 
 func move_to_safe_ledge_position(target_pos: Vector3):
 	var space_state = get_world_3d().direct_space_state
-	var test_pos = target_pos
 	var shape = $CollisionShape3D.shape
-	var tries := 5
-	var step := -get_wall_normal() * 0.1
+	var step_direction = (target_pos - global_transform.origin).normalized()
+	var step_distance := 0.1
+	var max_distance := global_transform.origin.distance_to(target_pos)
+	var moved_distance := 0.0
 
-	while tries > 0:
+	while moved_distance < max_distance:
+		var next_pos = global_transform.origin + step_direction * step_distance
+
 		var shape_query = PhysicsShapeQueryParameters3D.new()
 		shape_query.shape = shape
-		shape_query.transform = Transform3D(Basis(), test_pos)
+		shape_query.transform = Transform3D(Basis(), next_pos)
 		shape_query.collision_mask = collision_mask
 		shape_query.collide_with_areas = false
 		shape_query.collide_with_bodies = true
@@ -734,8 +738,19 @@ func move_to_safe_ledge_position(target_pos: Vector3):
 		var collision = space_state.intersect_shape(shape_query, 1)
 
 		if collision.is_empty():
-			global_transform.origin = test_pos
-			return
+			global_transform.origin = next_pos
+			moved_distance += step_distance
+		else:
+			break
 
-		test_pos += step
-		tries -= 1
+func set_blind_deaf_dumb(truthy : bool):
+	blind_deaf_dumb = truthy
+	print("blind " + str(blind_deaf_dumb))
+
+@rpc("any_peer")
+func remote_set_blind_deaf_dumb(state: bool):
+	print("remote blind " + str(blind_deaf_dumb))
+	if multiplayer.get_remote_sender_id() != 1:
+		print("Unauthorized RPC call")
+		return
+	set_blind_deaf_dumb(state)
